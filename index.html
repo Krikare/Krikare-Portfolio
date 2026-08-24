@@ -58,11 +58,11 @@
         </div>
         <button type="button" id="menuBtn" aria-expanded="false">Menu</button>
         <div class="menu-dropdown menu-nav" id="navMenu" hidden>
-          <a href="#about">Parliament — About</a>
-          <a href="#work">Red Fort — Work</a>
-          <a href="#projects">Hawa Mahal — Projects</a>
-          <a href="#skills">Qutub Minar — Skills</a>
-          <a href="#contact">India Gate — Contact</a>
+          <a href="#about">India Gate — About</a>
+          <a href="#craft">Parliament — Skills & Projects</a>
+          <a href="#education">Qutub Minar — Education</a>
+          <a href="#achievements">Red Fort — Achievements</a>
+          <a href="#contact">Hawa Mahal — Contact</a>
         </div>
       </div>
     </header>
@@ -108,22 +108,22 @@
           src="assets/campus.png"
           width="1536"
           height="1024"
-          alt="An axonometric campus in a tropical forest. Parliament is About, Red Fort is Work, Hawa Mahal is Projects, Qutub Minar is Skills, India Gate is Contact."
+          alt="An axonometric campus in a tropical forest. India Gate is About, Parliament is Skills and Projects, Hawa Mahal is Contact, Qutub Minar is Education, Red Fort is Achievements."
         />
         <svg class="hotspots" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="false">
-          <a href="#about" class="hot" data-pin="parliament" aria-label="Parliament — About">
+          <a href="#craft" class="hot" data-pin="parliament" aria-label="Parliament — Skills and Projects">
             <polygon points="17,30 27,21 39,28 41,42 35,57 22,59 15,46" />
           </a>
-          <a href="#projects" class="hot" data-pin="hawa" aria-label="Hawa Mahal — Projects">
+          <a href="#contact" class="hot" data-pin="hawa" aria-label="Hawa Mahal — Contact">
             <polygon points="47,9 56,8 58,14 56,26 47,27 45,16" />
           </a>
-          <a href="#skills" class="hot" data-pin="qutub" aria-label="Qutub Minar — Skills">
-            <polygon points="70,10 76,11 76,22 73,42 68,43 67,18" />
+          <a href="#education" class="hot" data-pin="qutub" aria-label="Qutub Minar — Education">
+            <polygon points="67,8 80,9 81,22 78,48 69,50 66,20" />
           </a>
-          <a href="#work" class="hot" data-pin="fort" aria-label="Red Fort — Work">
+          <a href="#achievements" class="hot" data-pin="fort" aria-label="Red Fort — Achievements and certifications">
             <polygon points="63,49 85,47 88,58 84,72 64,73 59,60" />
           </a>
-          <a href="#contact" class="hot" data-pin="gate" aria-label="India Gate — Contact">
+          <a href="#about" class="hot" data-pin="gate" aria-label="India Gate — About">
             <polygon points="44,60 56,58 58,72 55,84 45,85 42,72" />
           </a>
         </svg>
@@ -144,7 +144,7 @@
         </article>
         <article class="card">
           <div class="card-h">Latest from the yard</div>
-          <a class="journal-row" href="#projects">
+          <a class="journal-row" href="#craft">
             <strong>E-Commerce DevOps</strong>
             <span>AWS · Terraform · EKS · ArgoCD</span>
           </a>
@@ -154,41 +154,32 @@
 
     <section class="panel" id="about" hidden>
       <button class="close" type="button" data-close>Close</button>
-      <p class="eyebrow">Parliament of India</p>
+      <p class="eyebrow">India Gate</p>
       <h2>About</h2>
       <p>
-        Parliament is the house of identity — the circular plan of how I think. I am P S K Karthikeyan Reddy,
-        a computer-science student who treats infrastructure as architecture: rooms that have to work when
-        the weather turns.
+        I am P S K Karthikeyan Reddy, a computer-science student who treats infrastructure as architecture:
+        rooms that have to work when the weather turns.
       </p>
       <p>
-        I like systems that are documented, observed, and boring in the best way. CI/CD, runbooks, alerts
-        that mean something, networks that stay up.
+        I work at the seam of cloud, networks, and automation — how systems stay reliable when real traffic,
+        real failures, and real people show up. I like CI/CD, runbooks, alerts that mean something, and
+        networks that stay up.
       </p>
     </section>
 
-    <section class="panel" id="work" hidden>
+    <section class="panel" id="craft" hidden>
       <button class="close" type="button" data-close>Close</button>
-      <p class="eyebrow">Red Fort</p>
-      <h2>Work</h2>
-      <h3>Software Engineer Intern · Digital i360</h3>
-      <p class="muted">Hyderabad · May 2025 – Sep 2025</p>
-      <ul>
-        <li>Lead-processing system in Node.js and PostgreSQL — 5,000+ monthly records, 99.9% integrity.</li>
-        <li>Realtime monitoring on AWS Lambda and Redis — 40% faster incident response.</li>
-        <li>CI/CD with GitHub Actions, tests, and runbooks — 20+ bottlenecks cleared, 15% less latency.</li>
+      <p class="eyebrow">Parliament of India</p>
+      <h2>Skills & Projects</h2>
+      <h3>Skills</h3>
+      <ul class="skill-grid">
+        <li>AWS, Docker, Kubernetes, Terraform, Ansible, ArgoCD, GitHub Actions</li>
+        <li>TCP/IP, DNS, DHCP, VLANs, routing, VPN, firewalls</li>
+        <li>Python, Bash, JavaScript, TypeScript, Java, C++, SQL</li>
+        <li>Node.js, Express, FastAPI, PostgreSQL, Redis, MongoDB</li>
+        <li>Grafana, alerting, health checks, incident workflow</li>
       </ul>
-      <h3>GDSC Coordinator · LPU</h3>
-      <ul>
-        <li>Guided 10+ project teams. Two full-stack apps shipped for the Google Solution Challenge.</li>
-        <li>Grew the community 50 → 500+ with workshops on Google Cloud and full-stack.</li>
-      </ul>
-    </section>
-
-    <section class="panel" id="projects" hidden>
-      <button class="close" type="button" data-close>Close</button>
-      <p class="eyebrow">Hawa Mahal</p>
-      <h2>Projects</h2>
+      <h3>Projects</h3>
       <article>
         <h3>E-Commerce DevOps</h3>
         <p>Terraform on AWS (VPC, EKS, Route 53), Docker, Ansible, ArgoCD. Release time down 60%.</p>
@@ -203,25 +194,37 @@
       </article>
     </section>
 
-    <section class="panel" id="skills" hidden>
+    <section class="panel" id="education" hidden>
       <button class="close" type="button" data-close>Close</button>
       <p class="eyebrow">Qutub Minar</p>
-      <h2>Skills</h2>
-      <p>The minaret is the climb: layers of craft stacked over time.</p>
-      <ul class="skill-grid">
-        <li>AWS, Docker, Kubernetes, Terraform, Ansible, ArgoCD, GitHub Actions</li>
-        <li>TCP/IP, DNS, DHCP, VLANs, routing, VPN, firewalls</li>
-        <li>Python, Bash, JavaScript, TypeScript, Java, C++, SQL</li>
-        <li>Node.js, Express, FastAPI, PostgreSQL, Redis, MongoDB</li>
-        <li>Grafana, alerting, health checks, incident workflow</li>
+      <h2>Education</h2>
+      <h3>Bachelor of Technology in Computer Science</h3>
+      <p class="muted">Lovely Professional University · Phagwara, Punjab · Aug 2022 – Jun 2026</p>
+      <p>
+        Coursework in computer networks, operating systems, data structures and algorithms, and database
+        systems. Interest in network operations, DevOps, cloud infrastructure, and SRE.
+      </p>
+    </section>
+
+    <section class="panel" id="achievements" hidden>
+      <button class="close" type="button" data-close>Close</button>
+      <p class="eyebrow">Red Fort</p>
+      <h2>Achievements & Certifications</h2>
+      <ul>
+        <li>Google Cloud Certified — Associate Cloud Engineer (2025)</li>
+        <li>Amazon ML School 2025 — Top 1% among 60,000+ applicants</li>
+        <li>Google Developer Groups Challenge — Global Rank 304 among 10,000+</li>
+        <li>Google Open Code 2024 — Rank 3 at institute level</li>
+        <li>LeetCode Knight — max rating 1887</li>
+        <li>Codeforces Expert — max rating 1641</li>
       </ul>
     </section>
 
     <section class="panel" id="contact" hidden>
       <button class="close" type="button" data-close>Close</button>
-      <p class="eyebrow">India Gate</p>
+      <p class="eyebrow">Hawa Mahal</p>
       <h2>Contact</h2>
-      <p>The gate is the way in. Walk the forest road and knock.</p>
+      <p>If something here connects with your work, reach out.</p>
       <ul class="contact-list">
         <li><a href="mailto:sunnykarthik0987@gmail.com">sunnykarthik0987@gmail.com</a></li>
         <li><a href="tel:+919866928292">+91 98669 28292</a></li>

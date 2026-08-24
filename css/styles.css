@@ -287,6 +287,7 @@ body[data-time="dawn"] .campus {
   width: 100%;
   height: 100%;
   overflow: visible;
+  z-index: 4;
 }
 
 .hot {

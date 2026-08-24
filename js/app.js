@@ -16,11 +16,11 @@
   const birdCtx = birdCanvas.getContext("2d");
 
   const PINS = {
-    parliament: { title: "Parliament", sub: "About", x: 28, y: 22 },
-    hawa: { title: "Hawa Mahal", sub: "Projects", x: 52, y: 7 },
-    qutub: { title: "Qutub Minar", sub: "Skills", x: 73, y: 10 },
-    fort: { title: "Red Fort", sub: "Work", x: 74, y: 47 },
-    gate: { title: "India Gate", sub: "Contact", x: 50, y: 59 },
+    parliament: { title: "Parliament", sub: "Skills & Projects", x: 28, y: 22 },
+    hawa: { title: "Hawa Mahal", sub: "Contact", x: 52, y: 7 },
+    qutub: { title: "Qutub Minar", sub: "Education", x: 74, y: 8 },
+    fort: { title: "Red Fort", sub: "Achievements", x: 74, y: 47 },
+    gate: { title: "India Gate", sub: "About", x: 50, y: 59 },
   };
 
   const rain = [];
