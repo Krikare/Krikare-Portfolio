@@ -26,6 +26,7 @@
   letter-spacing: 0.12em;
   text-transform: uppercase;
   touch-action: none;
+  opacity: calc(max(0, 1 - (var(--cover, 0) * 1.35)));
 }
 
 .unwrap-cue:active {
@@ -48,6 +49,9 @@
   overflow: hidden;
   pointer-events: none;
   touch-action: none;
+  transform: translateZ(0);
+  --tear-y: 50vh;
+  --tear-r: 0.7deg;
 }
 
 .edition.is-interactive {
@@ -80,16 +84,31 @@
   background: var(--paper);
   will-change: transform;
   z-index: 1;
+  backface-visibility: hidden;
+  contain: layout style;
+}
+
+.half-top,
+.half-bot {
+  transform-origin: 10% 50%;
 }
 
 .half-top {
-  transform: translate3d(0, -58vh, 0);
-  filter: drop-shadow(0 10px 8px rgba(0, 0, 0, 0.22));
+  transform: translate3d(0, calc(-1 * var(--tear-y)), 0) rotate(calc(-1 * var(--tear-r)));
 }
 
 .half-bot {
-  transform: translate3d(0, 58vh, 0);
-  filter: drop-shadow(0 -10px 8px rgba(0, 0, 0, 0.22));
+  transform: translate3d(0, var(--tear-y), 0) rotate(var(--tear-r));
+}
+
+.rip-edge {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 4;
+  overflow: visible;
 }
 
 .half .wrap-back {

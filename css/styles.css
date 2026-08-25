@@ -1,5 +1,5 @@
 :root {
-  --bg: #5f6d52;
+  --bg: #1c3322;
   --surface: #fff;
   --ink: #0b0b0b;
   --muted: #545454;
@@ -13,6 +13,7 @@
   --sans: "Gothic A1", "Helvetica Neue", Arial, sans-serif;
   --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
   --serif: "Martel", Georgia, serif;
+  --cover: 0;
 }
 
 *,
@@ -80,6 +81,12 @@ a {
   z-index: 8;
   background: var(--sky, transparent);
   transition: background 1.2s ease;
+  opacity: calc(1 - var(--cover, 0));
+}
+
+#rainCanvas,
+#birdCanvas {
+  opacity: calc(1 - var(--cover, 0));
 }
 
 #lightning {
@@ -101,7 +108,7 @@ a {
 #noiseCanvas {
   z-index: 13;
   mix-blend-mode: overlay;
-  opacity: 0.55;
+  opacity: calc(0.55 * (1 - var(--cover, 0)));
 }
 
 .topbar {
@@ -251,10 +258,36 @@ a {
   display: grid;
   place-items: center;
   padding: 0;
+  overflow: hidden;
+  background: #1c3322;
+}
+
+.woods {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.woods img {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  height: 100%;
+  width: auto;
+  min-width: 100%;
+  min-height: 100%;
+  transform: translate(-50%, -50%);
+  object-fit: cover;
+  object-position: center;
+  filter: saturate(1.04) contrast(1.04);
+  transition: filter 1.2s ease;
 }
 
 .campus-wrap {
   position: relative;
+  z-index: 1;
   width: min(100vw, calc(100dvh * 1536 / 1024));
   height: min(100dvh, calc(100vw * 1024 / 1536));
 }
@@ -267,17 +300,28 @@ a {
   object-position: center;
   filter: saturate(1.04) contrast(1.04);
   transition: filter 1.2s ease;
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0%, #000 5.5%, #000 94.5%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 5.5%, #000 94.5%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, transparent 0%, #000 5.5%, #000 94.5%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 5.5%, #000 94.5%, transparent 100%);
+  mask-composite: intersect;
 }
 
-body[data-time="night"] .campus {
+body[data-time="night"] .campus,
+body[data-time="night"] .woods img {
   filter: brightness(0.55) saturate(0.85);
 }
 
-body[data-time="sunset"] .campus {
+body[data-time="sunset"] .campus,
+body[data-time="sunset"] .woods img {
   filter: sepia(0.25) saturate(1.15);
 }
 
-body[data-time="dawn"] .campus {
+body[data-time="dawn"] .campus,
+body[data-time="dawn"] .woods img {
   filter: sepia(0.12) brightness(1.05);
 }
 
@@ -288,72 +332,41 @@ body[data-time="dawn"] .campus {
   height: 100%;
   overflow: visible;
   z-index: 4;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.hot {
-  fill: transparent;
+.hotspots a,
+.hotspots a:link,
+.hotspots a:visited,
+.hot,
+.hot:hover,
+.hot:focus,
+.hot:focus-visible,
+.hot:active,
+.hot:focus-visible polygon,
+.hot:active polygon {
+  outline: none !important;
+  outline-offset: 0 !important;
+  box-shadow: none !important;
+  border: 0 !important;
   cursor: pointer;
-  pointer-events: all;
+  -webkit-tap-highlight-color: transparent !important;
 }
 
 .hot polygon {
+  fill: #000;
+  fill-opacity: 0;
+  stroke: none;
+  outline: none;
   pointer-events: all;
 }
 
 body.debug-hots .hot polygon {
   fill: rgba(255, 60, 60, 0.38);
+  fill-opacity: 1;
   stroke: #ff2a2a;
   stroke-width: 0.4;
-}
-
-.pin {
-  position: absolute;
-  pointer-events: none;
-  z-index: 6;
-  transform: translate(-8px, calc(-100% - 4px));
-  opacity: 0;
-  transition: opacity 0.16s ease, left 0.12s ease, top 0.12s ease;
-}
-
-.pin[hidden] {
-  display: block;
-}
-
-.pin.is-on {
-  opacity: 1;
-}
-
-.pin .stalk {
-  display: block;
-  width: 1px;
-  height: 72px;
-  margin-left: 8px;
-  background: repeating-linear-gradient(
-    to bottom,
-    var(--strong) 0 2px,
-    transparent 2px 4px
-  );
-}
-
-.pin .box {
-  background: var(--surface);
-  border: 1px solid var(--strong);
-  padding: 4px 14px 6px 8px;
-  min-width: 110px;
-}
-
-.pin b {
-  display: block;
-  font-family: var(--mono);
-  font-size: 10px;
-  text-transform: uppercase;
-  font-weight: 600;
-}
-
-.pin span {
-  display: block;
-  font-size: 11px;
-  color: var(--muted);
 }
 
 .rail {
@@ -555,50 +568,8 @@ body.is-unwrapped {
 }
 
 @media (max-width: 1100px) {
-  html,
-  body {
-    height: auto;
-    overflow: auto;
-    overflow-x: hidden;
-  }
-
   .hero {
-    height: auto;
-    min-height: 100dvh;
-    display: flex;
-    flex-direction: column;
-    padding: 72px 12px 24px;
-    place-items: stretch;
-  }
-
-  .campus-wrap {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 1536 / 1024;
-    order: 0;
-  }
-
-  .campus {
-    height: 100%;
-  }
-
-  .rail {
-    position: relative;
-    left: auto;
-    right: auto;
-    top: auto;
-    bottom: auto;
-    width: 100%;
-    padding-top: 0;
-    pointer-events: auto;
-  }
-
-  .rail-left {
-    order: 1;
-  }
-
-  .rail-right {
-    order: 2;
+    height: 100dvh;
   }
 }
 
@@ -609,9 +580,5 @@ body.is-unwrapped {
 
   .topbar {
     padding: 12px;
-  }
-
-  .pin .stalk {
-    height: 48px;
   }
 }

@@ -3,9 +3,6 @@
   const weatherMenu = document.getElementById("weatherMenu");
   const menuBtn = document.getElementById("menuBtn");
   const navMenu = document.getElementById("navMenu");
-  const pin = document.getElementById("pin");
-  const pinTitle = document.getElementById("pinTitle");
-  const pinSub = document.getElementById("pinSub");
   const stage = document.getElementById("stage");
   const rainCanvas = document.getElementById("rainCanvas");
   const noiseCanvas = document.getElementById("noiseCanvas");
@@ -14,14 +11,6 @@
   const rainCtx = rainCanvas.getContext("2d");
   const noiseCtx = noiseCanvas.getContext("2d");
   const birdCtx = birdCanvas.getContext("2d");
-
-  const PINS = {
-    parliament: { title: "Parliament", sub: "Skills & Projects", x: 28, y: 22 },
-    hawa: { title: "Hawa Mahal", sub: "Contact", x: 52, y: 7 },
-    qutub: { title: "Qutub Minar", sub: "Education", x: 74, y: 8 },
-    fort: { title: "Red Fort", sub: "Achievements", x: 74, y: 47 },
-    gate: { title: "India Gate", sub: "About", x: 50, y: 59 },
-  };
 
   const rain = [];
   const birds = [];
@@ -197,7 +186,7 @@
     if (raining) {
       if (t >= storm.nextAt) startStorm(t);
       const flash = stormOpacity(t);
-      lightning.style.opacity = String(flash);
+      lightning.style.opacity = String(flash * (1 - cover));
 
       rainCtx.strokeStyle = "rgba(214, 228, 238, 0.48)";
       rain.forEach((drop) => {
@@ -283,28 +272,25 @@
     document.querySelectorAll(".panel").forEach((el) => {
       el.hidden = el.id !== id;
     });
+    const active = document.activeElement;
+    if (active && active.classList?.contains("hot")) active.blur();
   }
+
+  document.querySelectorAll(".hot").forEach((hot) => {
+    hot.addEventListener("click", (e) => {
+      e.preventDefault();
+      const id = hot.dataset.panel;
+      if (!id) return;
+      history.replaceState(null, "", "#" + id);
+      openPanel(id);
+    });
+  });
 
   function closePanels() {
     document.querySelectorAll(".panel").forEach((el) => {
       el.hidden = true;
     });
     if (location.hash) history.replaceState(null, "", " ");
-  }
-
-  function showPin(key) {
-    const data = PINS[key];
-    if (!data) return;
-    pinTitle.textContent = data.title;
-    pinSub.textContent = data.sub;
-    pin.hidden = false;
-    pin.style.left = `${data.x}%`;
-    pin.style.top = `${data.y}%`;
-    requestAnimationFrame(() => pin.classList.add("is-on"));
-  }
-
-  function hidePin() {
-    pin.classList.remove("is-on");
   }
 
   weatherBtn.addEventListener("click", (e) => {
@@ -333,13 +319,6 @@
   });
 
   document.addEventListener("click", () => closeMenus());
-
-  document.querySelectorAll(".hot").forEach((hot) => {
-    hot.addEventListener("pointerenter", () => showPin(hot.dataset.pin));
-    hot.addEventListener("pointerleave", hidePin);
-    hot.addEventListener("focus", () => showPin(hot.dataset.pin));
-    hot.addEventListener("blur", hidePin);
-  });
 
   document.querySelectorAll("[data-close]").forEach((btn) => {
     btn.addEventListener("click", closePanels);
@@ -378,20 +357,20 @@
   const sheetLive = document.getElementById("sheetLive");
   const halfTop = document.getElementById("halfTop");
   const halfBot = document.getElementById("halfBot");
-  const fx = [
-    document.getElementById("rainCanvas"),
-    document.getElementById("noiseCanvas"),
-    document.getElementById("birdCanvas"),
-    lightning,
-    document.getElementById("skyGlow"),
-    ...document.querySelectorAll(".rail, .topbar"),
-  ];
 
   let cover = 0;
   let coverTarget = 0;
   let snapping = false;
   let drag = null;
+  let wheelAcc = 0;
+  let coverRaf = 0;
+  let lastCoverT = 0;
+  let lastBucket = -1;
+  let ripPts = [];
+  let ripTop = [];
+  let ripBot = [];
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const RIP_N = 168;
 
   function clamp(n, a, b) {
     return Math.min(b, Math.max(a, n));
@@ -402,23 +381,83 @@
     return n - Math.floor(n);
   }
 
-  function tearClip() {
-    const steps = 40;
-    const jagged = [];
-    for (let i = 0; i <= steps; i++) {
-      const x = (i / steps) * 100;
-      const y = 50 + (hash(i) - 0.5) * 3.6 + (hash(i + 17) - 0.5) * 1.8;
-      jagged.push(`${x.toFixed(2)}% ${y.toFixed(2)}%`);
+  function hairLine(backbone, intoGap) {
+    const pts = [];
+    backbone.forEach(([x, y], i) => {
+      pts.push([x, y]);
+      if (i === 0 || i === backbone.length - 1) return;
+      const len = 0.55 + hash(i + 11) * 1.55;
+      const lean = (hash(i + 19) - 0.5) * 0.35;
+      pts.push([x + 0.06 + lean, y + intoGap * len]);
+      pts.push([x + 0.2, y]);
+    });
+    return pts;
+  }
+
+  function initRip() {
+    const fiber = new Float32Array(RIP_N + 1);
+    for (let i = 0; i <= RIP_N; i++) {
+      const a = hash(i) - 0.5;
+      const b = hash(i + 23) - 0.5;
+      const c = hash(i + 47) - 0.5;
+      fiber[i] = a * 1.35 + b * 0.7 + c * 0.32;
     }
-    const topEdge = jagged.slice().reverse().join(", ");
-    const botEdge = jagged.join(", ");
-    halfTop.style.clipPath = `polygon(0% 0%, 100% 0%, ${topEdge})`;
-    halfBot.style.clipPath = `polygon(${botEdge}, 100% 100%, 0% 100%)`;
+    for (let i = 1; i < RIP_N; i++) {
+      fiber[i] = fiber[i] * 0.5 + fiber[i - 1] * 0.28 + fiber[i + 1] * 0.22;
+    }
+    ripPts = [];
+    for (let i = 0; i <= RIP_N; i++) {
+      const x = (i / RIP_N) * 100;
+      const sharp = hash(i * 5 + 2);
+      const spike =
+        sharp > 0.9 ? (hash(i + 41) - 0.5) * 3.1 : sharp > 0.8 ? (hash(i + 13) - 0.5) * 1.7 : 0;
+      ripPts.push([x, 50 + fiber[i] * 2.15 + spike]);
+    }
+    ripTop = hairLine(ripPts, 1);
+    ripBot = hairLine(ripPts, -1);
+  }
+
+  function clipStr(pts) {
+    return pts.map(([x, y]) => `${x.toFixed(2)}% ${y.toFixed(2)}%`).join(", ");
+  }
+
+  function makeRipEdge(pts) {
+    const ns = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(ns, "svg");
+    svg.setAttribute("class", "rip-edge");
+    svg.setAttribute("viewBox", "0 0 100 100");
+    svg.setAttribute("preserveAspectRatio", "none");
+    svg.setAttribute("aria-hidden", "true");
+    const d = pts.map((p, i) => `${i ? "L" : "M"} ${p[0].toFixed(2)} ${p[1].toFixed(2)}`).join(" ");
+    const back = document.createElementNS(ns, "path");
+    back.setAttribute("d", d);
+    back.setAttribute("fill", "none");
+    back.setAttribute("stroke", "#0c0c0c");
+    back.setAttribute("stroke-width", "1.45");
+    back.setAttribute("stroke-linejoin", "miter");
+    back.setAttribute("stroke-linecap", "butt");
+    const front = document.createElementNS(ns, "path");
+    front.setAttribute("d", d);
+    front.setAttribute("fill", "none");
+    front.setAttribute("stroke", "#222");
+    front.setAttribute("stroke-width", "0.5");
+    front.setAttribute("stroke-linejoin", "miter");
+    svg.append(back, front);
+    return svg;
+  }
+
+  function tearClip() {
+    if (!halfTop || !halfBot || !ripTop.length) return;
+    halfTop.style.clipPath = `polygon(0% 0%, 100% 0%, ${clipStr(ripTop.slice().reverse())})`;
+    halfBot.style.clipPath = `polygon(${clipStr(ripBot)}, 100% 100%, 0% 100%)`;
   }
 
   function cloneHalves() {
     if (!sheetLive || !halfTop || !halfBot) return;
-    [halfTop, halfBot].forEach((half) => {
+    [
+      [halfTop, ripTop],
+      [halfBot, ripBot],
+    ].forEach(([half, pts]) => {
       half.replaceChildren();
       const copy = sheetLive.cloneNode(true);
       copy.id = "";
@@ -426,63 +465,105 @@
       copy.querySelectorAll("[id]").forEach((node) => node.removeAttribute("id"));
       copy.querySelectorAll("button, a").forEach((node) => node.setAttribute("tabindex", "-1"));
       half.appendChild(copy);
+      half.appendChild(makeRipEdge(pts));
     });
     tearClip();
-  }
-
-  function applyCover(p) {
-    const open = 1 - p;
-    const travel = open * 58;
-    if (halfTop) halfTop.style.transform = `translate3d(0, ${-travel}vh, 0)`;
-    if (halfBot) halfBot.style.transform = `translate3d(0, ${travel}vh, 0)`;
-    edition.classList.toggle("is-tearing", p < 0.985);
-    edition.classList.toggle("is-interactive", p > 0.08);
-    edition.setAttribute("aria-hidden", p > 0.08 ? "false" : "true");
-    if (unwrapCue) {
-      unwrapCue.style.opacity = String(clamp(1 - p * 1.35, 0, 1));
-      unwrapCue.style.pointerEvents = p > 0.55 ? "none" : "auto";
-    }
-    fx.forEach((node) => {
-      if (node) node.style.opacity = String(1 - p);
-    });
-    document.body.classList.toggle("is-covering", p > 0.02);
-    document.body.classList.toggle("is-unwrapped", p > 0.92);
-  }
-
-  function tickCover() {
-    const ease = reduceMotion ? 1 : drag ? 1 : snapping ? 0.2 : 0.38;
-    cover += (coverTarget - cover) * ease;
-    if (Math.abs(coverTarget - cover) < 0.001) cover = coverTarget;
-    applyCover(cover);
-    requestAnimationFrame(tickCover);
   }
 
   function viewportH() {
     return window.visualViewport?.height || innerHeight;
   }
 
+  function travelMax() {
+    return viewportH() * 0.5;
+  }
+
+  function applyCover(p) {
+    const open = 1 - p;
+    const y = open * travelMax();
+    const tilt = open * 0.7;
+    document.documentElement.style.setProperty("--cover", p.toFixed(4));
+    edition.style.setProperty("--tear-y", `${y.toFixed(2)}px`);
+    edition.style.setProperty("--tear-r", `${tilt.toFixed(3)}deg`);
+    const tearing = p < 0.985;
+    const interactive = p > 0.08;
+    const covering = p > 0.02;
+    const unwrapped = p > 0.92;
+    const bucket =
+      (tearing ? 1 : 0) | (interactive ? 2 : 0) | (covering ? 4 : 0) | (unwrapped ? 8 : 0);
+    if (bucket === lastBucket) return;
+    lastBucket = bucket;
+    edition.classList.toggle("is-tearing", tearing);
+    edition.classList.toggle("is-interactive", interactive);
+    edition.setAttribute("aria-hidden", interactive ? "false" : "true");
+    document.body.classList.toggle("is-covering", covering);
+    document.body.classList.toggle("is-unwrapped", unwrapped);
+    if (unwrapCue) unwrapCue.style.pointerEvents = p > 0.55 ? "none" : "auto";
+  }
+
+  function kickCover() {
+    if (!coverRaf) coverRaf = requestAnimationFrame(tickCover);
+  }
+
+  function tickCover(now) {
+    coverRaf = 0;
+    const dt = lastCoverT ? Math.min(33, now - lastCoverT) : 16.67;
+    lastCoverT = now;
+
+    if (wheelAcc) {
+      coverTarget = clamp(coverTarget + wheelAcc / travelMax(), 0, 1);
+      wheelAcc = 0;
+    }
+
+    if (drag || reduceMotion) {
+      cover = coverTarget;
+      snapping = false;
+    } else if (snapping) {
+      cover += (coverTarget - cover) * (1 - Math.exp(-dt / 90));
+      if (Math.abs(coverTarget - cover) < 0.00035) {
+        cover = coverTarget;
+        snapping = false;
+      }
+    } else if (Math.abs(coverTarget - cover) > 0.00008) {
+      cover += (coverTarget - cover) * (1 - Math.exp(-dt / 18));
+      if (Math.abs(coverTarget - cover) < 0.00008) cover = coverTarget;
+    }
+
+    applyCover(cover);
+    if (drag || snapping || Math.abs(coverTarget - cover) > 0.00008) kickCover();
+  }
+
   function setCoverImmediate(p) {
     snapping = false;
     coverTarget = clamp(p, 0, 1);
-    if (drag || reduceMotion) {
-      cover = coverTarget;
-      applyCover(cover);
-    }
+    cover = coverTarget;
+    applyCover(cover);
   }
 
   function setCoverSnap(p) {
     coverTarget = clamp(p, 0, 1);
-    snapping = !reduceMotion;
     if (reduceMotion) {
       cover = coverTarget;
+      snapping = false;
       applyCover(cover);
+      return;
     }
+    snapping = true;
+    kickCover();
   }
 
-  function onCoverDelta(dy) {
-    if (coverTarget >= 0.999 && dy > 0) return false;
-    setCoverImmediate(coverTarget + dy / viewportH());
+  function onCoverDelta(px) {
+    if (coverTarget >= 0.999 && px > 0) return false;
+    if (coverTarget <= 0 && px < 0) return false;
+    wheelAcc += px;
+    kickCover();
     return true;
+  }
+
+  function wheelPixels(e) {
+    if (e.deltaMode === 1) return e.deltaY * 16;
+    if (e.deltaMode === 2) return e.deltaY * viewportH();
+    return e.deltaY;
   }
 
   wrapBack?.addEventListener("click", (e) => {
@@ -494,7 +575,6 @@
   unwrapCue?.addEventListener("click", (e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (cover < 0.86) setCoverSnap(1);
   });
 
   window.addEventListener("keydown", (e) => {
@@ -507,10 +587,9 @@
   window.addEventListener(
     "wheel",
     (e) => {
+      if (e.ctrlKey) return;
       if (document.querySelector(".panel:not([hidden])")) return;
-      if (coverTarget >= 0.999 && e.deltaY > 0) return;
-      if (coverTarget <= 0 && e.deltaY < 0) return;
-      if (onCoverDelta(e.deltaY)) e.preventDefault();
+      if (onCoverDelta(wheelPixels(e))) e.preventDefault();
     },
     { passive: false }
   );
@@ -528,8 +607,10 @@
         moved: 0,
         fromCue: el === unwrapCue,
       };
+      snapping = false;
       el.setPointerCapture?.(e.pointerId);
       if (el !== unwrapCue) e.preventDefault();
+      kickCover();
     });
   }
 
@@ -539,7 +620,8 @@
     if (!drag || e.pointerId !== drag.id) return;
     const dy = drag.y - e.clientY;
     drag.moved = Math.max(drag.moved, Math.abs(dy));
-    setCoverImmediate(drag.start + dy / viewportH());
+    coverTarget = clamp(drag.start + dy / travelMax(), 0, 1);
+    kickCover();
   });
 
   function endDrag(e) {
@@ -550,16 +632,18 @@
       setCoverSnap(1);
       return;
     }
-    if (cover > 0.86) setCoverSnap(1);
-    else if (cover < 0.14) setCoverSnap(0);
+    if (cover > 0.94) setCoverSnap(1);
+    else if (cover < 0.06) setCoverSnap(0);
   }
 
   window.addEventListener("pointerup", endDrag);
   window.addEventListener("pointercancel", endDrag);
+  window.addEventListener("resize", () => applyCover(cover));
+  window.visualViewport?.addEventListener("resize", () => applyCover(cover));
 
+  initRip();
   cloneHalves();
   applyCover(0);
-  requestAnimationFrame(tickCover);
   applyTime("day");
   applyWeather("rain");
   if (/debug=hots/.test(location.search)) document.body.classList.add("debug-hots");
