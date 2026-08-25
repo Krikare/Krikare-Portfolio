@@ -372,9 +372,198 @@
     new ResizeObserver(onResize).observe(stage);
   }
 
+  const unwrapCue = document.getElementById("unwrapCue");
+  const wrapBack = document.getElementById("wrapBack");
+  const edition = document.getElementById("edition");
+  const sheetLive = document.getElementById("sheetLive");
+  const halfTop = document.getElementById("halfTop");
+  const halfBot = document.getElementById("halfBot");
+  const fx = [
+    document.getElementById("rainCanvas"),
+    document.getElementById("noiseCanvas"),
+    document.getElementById("birdCanvas"),
+    lightning,
+    document.getElementById("skyGlow"),
+    ...document.querySelectorAll(".rail, .topbar"),
+  ];
+
+  let cover = 0;
+  let coverTarget = 0;
+  let snapping = false;
+  let drag = null;
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function clamp(n, a, b) {
+    return Math.min(b, Math.max(a, n));
+  }
+
+  function hash(i) {
+    const n = Math.sin(i * 12.9898 + 78.233) * 43758.5453;
+    return n - Math.floor(n);
+  }
+
+  function tearClip() {
+    const steps = 40;
+    const jagged = [];
+    for (let i = 0; i <= steps; i++) {
+      const x = (i / steps) * 100;
+      const y = 50 + (hash(i) - 0.5) * 3.6 + (hash(i + 17) - 0.5) * 1.8;
+      jagged.push(`${x.toFixed(2)}% ${y.toFixed(2)}%`);
+    }
+    const topEdge = jagged.slice().reverse().join(", ");
+    const botEdge = jagged.join(", ");
+    halfTop.style.clipPath = `polygon(0% 0%, 100% 0%, ${topEdge})`;
+    halfBot.style.clipPath = `polygon(${botEdge}, 100% 100%, 0% 100%)`;
+  }
+
+  function cloneHalves() {
+    if (!sheetLive || !halfTop || !halfBot) return;
+    [halfTop, halfBot].forEach((half) => {
+      half.replaceChildren();
+      const copy = sheetLive.cloneNode(true);
+      copy.id = "";
+      copy.classList.remove("paper-live");
+      copy.querySelectorAll("[id]").forEach((node) => node.removeAttribute("id"));
+      copy.querySelectorAll("button, a").forEach((node) => node.setAttribute("tabindex", "-1"));
+      half.appendChild(copy);
+    });
+    tearClip();
+  }
+
+  function applyCover(p) {
+    const open = 1 - p;
+    const travel = open * 58;
+    if (halfTop) halfTop.style.transform = `translate3d(0, ${-travel}vh, 0)`;
+    if (halfBot) halfBot.style.transform = `translate3d(0, ${travel}vh, 0)`;
+    edition.classList.toggle("is-tearing", p < 0.985);
+    edition.classList.toggle("is-interactive", p > 0.08);
+    edition.setAttribute("aria-hidden", p > 0.08 ? "false" : "true");
+    if (unwrapCue) {
+      unwrapCue.style.opacity = String(clamp(1 - p * 1.35, 0, 1));
+      unwrapCue.style.pointerEvents = p > 0.55 ? "none" : "auto";
+    }
+    fx.forEach((node) => {
+      if (node) node.style.opacity = String(1 - p);
+    });
+    document.body.classList.toggle("is-covering", p > 0.02);
+    document.body.classList.toggle("is-unwrapped", p > 0.92);
+  }
+
+  function tickCover() {
+    const ease = reduceMotion ? 1 : drag ? 1 : snapping ? 0.2 : 0.38;
+    cover += (coverTarget - cover) * ease;
+    if (Math.abs(coverTarget - cover) < 0.001) cover = coverTarget;
+    applyCover(cover);
+    requestAnimationFrame(tickCover);
+  }
+
+  function viewportH() {
+    return window.visualViewport?.height || innerHeight;
+  }
+
+  function setCoverImmediate(p) {
+    snapping = false;
+    coverTarget = clamp(p, 0, 1);
+    if (drag || reduceMotion) {
+      cover = coverTarget;
+      applyCover(cover);
+    }
+  }
+
+  function setCoverSnap(p) {
+    coverTarget = clamp(p, 0, 1);
+    snapping = !reduceMotion;
+    if (reduceMotion) {
+      cover = coverTarget;
+      applyCover(cover);
+    }
+  }
+
+  function onCoverDelta(dy) {
+    if (coverTarget >= 0.999 && dy > 0) return false;
+    setCoverImmediate(coverTarget + dy / viewportH());
+    return true;
+  }
+
+  wrapBack?.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCoverSnap(0);
+  });
+
+  unwrapCue?.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (cover < 0.86) setCoverSnap(1);
+  });
+
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && coverTarget > 0) {
+      if (document.querySelector(".panel:not([hidden])")) return;
+      setCoverSnap(0);
+    }
+  });
+
+  window.addEventListener(
+    "wheel",
+    (e) => {
+      if (document.querySelector(".panel:not([hidden])")) return;
+      if (coverTarget >= 0.999 && e.deltaY > 0) return;
+      if (coverTarget <= 0 && e.deltaY < 0) return;
+      if (onCoverDelta(e.deltaY)) e.preventDefault();
+    },
+    { passive: false }
+  );
+
+  const dragHandles = [unwrapCue, edition].filter(Boolean);
+
+  function dragFrom(el) {
+    el.addEventListener("pointerdown", (e) => {
+      if (e.button && e.button !== 0) return;
+      if (e.target.closest("a, .wrap-back, .paper-bio, .paper-toc, .paper-photo")) return;
+      drag = {
+        id: e.pointerId,
+        y: e.clientY,
+        start: cover,
+        moved: 0,
+        fromCue: el === unwrapCue,
+      };
+      el.setPointerCapture?.(e.pointerId);
+      if (el !== unwrapCue) e.preventDefault();
+    });
+  }
+
+  dragHandles.forEach(dragFrom);
+
+  window.addEventListener("pointermove", (e) => {
+    if (!drag || e.pointerId !== drag.id) return;
+    const dy = drag.y - e.clientY;
+    drag.moved = Math.max(drag.moved, Math.abs(dy));
+    setCoverImmediate(drag.start + dy / viewportH());
+  });
+
+  function endDrag(e) {
+    if (!drag || (e && e.pointerId !== drag.id)) return;
+    const wasCueTap = drag.fromCue && drag.moved < 8;
+    drag = null;
+    if (wasCueTap) {
+      setCoverSnap(1);
+      return;
+    }
+    if (cover > 0.86) setCoverSnap(1);
+    else if (cover < 0.14) setCoverSnap(0);
+  }
+
+  window.addEventListener("pointerup", endDrag);
+  window.addEventListener("pointercancel", endDrag);
+
+  cloneHalves();
+  applyCover(0);
+  requestAnimationFrame(tickCover);
   applyTime("day");
   applyWeather("rain");
   if (/debug=hots/.test(location.search)) document.body.classList.add("debug-hots");
+  if (/edition/.test(location.search)) setCoverImmediate(1);
   sizeCanvases();
   seedRain();
   seedBirds();

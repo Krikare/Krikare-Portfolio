@@ -11,10 +11,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Martel:wght@600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Martel:wght@600;700;800&family=Newsreader:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400;1,8..60,500&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/newspaper.css" />
   </head>
   <body data-weather="rain" data-time="day">
     <canvas id="noiseCanvas" aria-hidden="true"></canvas>
@@ -151,6 +152,92 @@
         </article>
       </aside>
     </main>
+
+    <button class="unwrap-cue" id="unwrapCue" type="button">
+      Scroll to unwrap <span>↓</span>
+    </button>
+
+    <section class="edition is-tearing" id="edition" aria-hidden="true">
+      <div class="tear" id="tear" aria-hidden="true">
+        <div class="half half-top" id="halfTop"></div>
+        <div class="half half-bot" id="halfBot"></div>
+      </div>
+      <div class="sheet paper-live" id="sheetLive">
+      <div class="paper">
+        <header class="paper-mast">
+          <button class="wrap-back" id="wrapBack" type="button">← Campus</button>
+          <p class="paper-kicker">Systems builder / cloud &amp; networks</p>
+          <p class="paper-name">Karthik Reddy</p>
+          <p class="paper-place">Hyderabad, India</p>
+        </header>
+
+        <div class="paper-hed">
+          <h1>Building what holds.</h1>
+          <p class="paper-dek">
+            A computer-science student working at the intersection of infrastructure, automation, and the
+            people who depend on it.
+          </p>
+        </div>
+
+        <div class="paper-grid">
+          <article class="paper-col paper-bio">
+            <h2>The systems builder</h2>
+            <p>
+              <span class="drop">I</span>treat infrastructure as architecture: rooms that still work when the
+              weather turns. Placeholder copy — swap this bio later without changing the layout.
+            </p>
+            <p>
+              Cloud, networks, DevOps, and SRE. Pipelines, graphs, runbooks. More lines can land here when
+              you are ready.
+            </p>
+          </article>
+
+          <figure class="paper-col paper-fig">
+            <div class="paper-photo">
+              <img src="assets/paperPicture.jpg" alt="Karthik Reddy" width="800" height="1000" />
+            </div>
+            <figcaption>Fig. 001 — Campus edition.</figcaption>
+          </figure>
+
+          <nav class="paper-col paper-toc" aria-label="Inside this portfolio">
+            <h2>Inside this portfolio</h2>
+            <ol>
+              <li>
+                <a href="#about">
+                  <span class="toc-row"><b>About</b><i>P. 03</i></span>
+                  <em>Who I am, in print.</em>
+                </a>
+              </li>
+              <li>
+                <a href="#craft">
+                  <span class="toc-row"><b>Skills &amp; Projects</b><i>P. 06</i></span>
+                  <em>What I build, and how.</em>
+                </a>
+              </li>
+              <li>
+                <a href="#education">
+                  <span class="toc-row"><b>Education</b><i>P. 09</i></span>
+                  <em>The climb through school.</em>
+                </a>
+              </li>
+              <li>
+                <a href="#achievements">
+                  <span class="toc-row"><b>Achievements</b><i>P. 12</i></span>
+                  <em>Certs, ranks, the record.</em>
+                </a>
+              </li>
+              <li>
+                <a href="#contact">
+                  <span class="toc-row"><b>Contact</b><i>P. 15</i></span>
+                  <em>How to reach me.</em>
+                </a>
+              </li>
+            </ol>
+          </nav>
+        </div>
+      </div>
+      </div>
+    </section>
 
     <section class="panel" id="about" hidden>
       <button class="close" type="button" data-close>Close</button>

@@ -548,6 +548,12 @@ body.debug-hots .hot polygon {
   font-size: 13px;
 }
 
+body.is-covering,
+body.is-unwrapped {
+  overflow: hidden !important;
+  height: 100% !important;
+}
+
 @media (max-width: 1100px) {
   html,
   body {
