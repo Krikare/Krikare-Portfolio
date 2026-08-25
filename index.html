@@ -81,22 +81,29 @@
           alt="An axonometric campus in a tropical forest. India Gate is About, Parliament is Skills and Projects, Hawa Mahal is Contact, Qutub Minar is Education, Red Fort is Achievements."
         />
         <svg class="hotspots" viewBox="0 0 100 100" preserveAspectRatio="none">
-          <g class="hot" data-panel="craft" role="link" aria-label="Parliament — Skills and Projects">
+          <g class="hot" data-pin="parliament" data-panel="craft" role="link" aria-label="Parliament — Skills and Projects">
             <polygon points="17,30 27,21 39,28 41,42 35,57 22,59 15,46" fill="transparent" />
           </g>
-          <g class="hot" data-panel="contact" role="link" aria-label="Hawa Mahal — Contact">
+          <g class="hot" data-pin="hawa" data-panel="contact" role="link" aria-label="Hawa Mahal — Contact">
             <polygon points="47,9 56,8 58,14 56,26 47,27 45,16" fill="transparent" />
           </g>
-          <g class="hot" data-panel="education" role="link" aria-label="Qutub Minar — Education">
+          <g class="hot" data-pin="qutub" data-panel="education" role="link" aria-label="Qutub Minar — Education">
             <polygon points="67,8 80,9 81,22 78,48 69,50 66,20" fill="transparent" />
           </g>
-          <g class="hot" data-panel="achievements" role="link" aria-label="Red Fort — Achievements and certifications">
+          <g class="hot" data-pin="fort" data-panel="achievements" role="link" aria-label="Red Fort — Achievements and certifications">
             <polygon points="63,49 85,47 88,58 84,72 64,73 59,60" fill="transparent" />
           </g>
-          <g class="hot" data-panel="about" role="link" aria-label="India Gate — About">
+          <g class="hot" data-pin="gate" data-panel="about" role="link" aria-label="India Gate — About">
             <polygon points="44,60 56,58 58,72 55,84 45,85 42,72" fill="transparent" />
           </g>
         </svg>
+        <div class="pin" id="pin" hidden>
+          <i class="stalk"></i>
+          <div class="box">
+            <b id="pinTitle"></b>
+            <span id="pinSub"></span>
+          </div>
+        </div>
       </div>
     </main>
 

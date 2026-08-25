@@ -4,6 +4,9 @@
   const menuBtn = document.getElementById("menuBtn");
   const navMenu = document.getElementById("navMenu");
   const stage = document.getElementById("stage");
+  const pin = document.getElementById("pin");
+  const pinTitle = document.getElementById("pinTitle");
+  const pinSub = document.getElementById("pinSub");
   const rainCanvas = document.getElementById("rainCanvas");
   const noiseCanvas = document.getElementById("noiseCanvas");
   const birdCanvas = document.getElementById("birdCanvas");
@@ -276,9 +279,35 @@
     if (active && active.classList?.contains("hot")) active.blur();
   }
 
+  const PINS = {
+    parliament: { title: "Parliament", sub: "Skills & Projects", x: 28, y: 22 },
+    hawa: { title: "Hawa Mahal", sub: "Contact", x: 52, y: 7 },
+    qutub: { title: "Qutub Minar", sub: "Education", x: 74, y: 8 },
+    fort: { title: "Red Fort", sub: "Achievements", x: 74, y: 47 },
+    gate: { title: "India Gate", sub: "About", x: 50, y: 59 },
+  };
+
+  function showPin(key) {
+    const data = PINS[key];
+    if (!data || !pin || cover > 0.08) return;
+    pinTitle.textContent = data.title;
+    pinSub.textContent = data.sub;
+    pin.hidden = false;
+    pin.style.left = `${data.x}%`;
+    pin.style.top = `${data.y}%`;
+    requestAnimationFrame(() => pin.classList.add("is-on"));
+  }
+
+  function hidePin() {
+    pin?.classList.remove("is-on");
+  }
+
   document.querySelectorAll(".hot").forEach((hot) => {
+    hot.addEventListener("pointerenter", () => showPin(hot.dataset.pin));
+    hot.addEventListener("pointerleave", hidePin);
     hot.addEventListener("click", (e) => {
       e.preventDefault();
+      hidePin();
       const id = hot.dataset.panel;
       if (!id) return;
       history.replaceState(null, "", "#" + id);
@@ -485,6 +514,7 @@
     document.documentElement.style.setProperty("--cover", p.toFixed(4));
     edition.style.setProperty("--tear-y", `${y.toFixed(2)}px`);
     edition.style.setProperty("--tear-r", `${tilt.toFixed(3)}deg`);
+    if (p > 0.08) hidePin();
     const tearing = p < 0.985;
     const interactive = p > 0.08;
     const covering = p > 0.02;
