@@ -1,0 +1,310 @@
+html:has(body.is-paged) {
+  height: auto;
+  overflow-y: auto;
+}
+
+.studio {
+  --studio-beige: #e6d7c3;
+  --studio-ink: #1a1714;
+  --studio-line: rgba(26, 23, 20, 0.22);
+  --studio-paper: #f3eadc;
+  position: relative;
+  z-index: 72;
+  min-height: 100dvh;
+  height: 100dvh;
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  background: var(--studio-beige);
+  color: var(--studio-ink);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.studio-wheel {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: 0;
+  border-right: 1px solid var(--studio-line);
+  background: var(--studio-beige);
+  overflow: hidden;
+}
+
+.wheel-label {
+  position: absolute;
+  left: 16px;
+  top: 18px;
+  z-index: 3;
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.wheel {
+  width: min(80%, 70dvh, 740px);
+  aspect-ratio: 1;
+  position: relative;
+  isolation: isolate;
+}
+
+.wheel-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.wheel-ring {
+  fill: none;
+  stroke: rgba(26, 23, 20, 0.32);
+  stroke-width: 1.1px;
+}
+
+.wheel-core {
+  fill: var(--studio-beige);
+  stroke: rgba(26, 23, 20, 0.36);
+}
+
+.wheel-hub {
+  fill: none;
+  stroke-linecap: square;
+  stroke-linejoin: round;
+}
+
+.hub-pkg {
+  fill: var(--studio-paper);
+  stroke: rgba(26, 23, 20, 0.55);
+}
+
+.hub-die {
+  fill: rgba(26, 23, 20, 0.05);
+  stroke: rgba(26, 23, 20, 0.38);
+}
+
+.hub-code {
+  fill: none;
+  stroke: rgba(26, 23, 20, 0.62);
+}
+
+.hub-pins {
+  stroke: rgba(26, 23, 20, 0.48);
+}
+
+.hub-notch {
+  fill: rgba(26, 23, 20, 0.42);
+  stroke: none;
+  animation: hub-glow 5.2s ease-in-out infinite;
+}
+
+@keyframes hub-glow {
+  0%,
+  100% {
+    fill: rgba(26, 23, 20, 0.22);
+  }
+  50% {
+    fill: rgba(26, 23, 20, 0.7);
+  }
+}
+
+.wheel-orbit {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.skill-logo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 56px;
+  height: 56px;
+  margin: 0;
+  padding: 3px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--studio-paper);
+  box-shadow: 0 1px 0 rgba(26, 23, 20, 0.12);
+  display: grid;
+  place-items: center;
+  pointer-events: auto;
+  will-change: transform, filter, opacity;
+}
+
+.skill-logo img,
+.skill-logo span {
+  width: 92%;
+  height: 92%;
+  object-fit: contain;
+  display: block;
+  pointer-events: none;
+}
+
+.skill-logo span {
+  width: 100%;
+  height: auto;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-align: center;
+  line-height: 1;
+}
+
+.wheel-veil {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  border-radius: 50%;
+  background: linear-gradient(
+    90deg,
+    rgba(230, 215, 195, 0.22) 0%,
+    rgba(230, 215, 195, 0.12) 42%,
+    rgba(230, 215, 195, 0.04) 50%,
+    transparent 62%
+  );
+}
+
+.studio-side {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  min-width: 0;
+  min-height: 0;
+}
+
+.resume-row,
+.project-grid {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 14px;
+}
+
+.project-grid {
+  grid-template-rows: 1fr 1fr;
+  border-top: 1px solid var(--studio-line);
+}
+
+.resume-card,
+.project-card {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--studio-paper);
+  border: 1px solid var(--studio-ink);
+  padding: 12px 14px;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 4px 4px 0 rgba(26, 23, 20, 0.07);
+}
+
+.project-card:hover {
+  background: #efe4d2;
+}
+
+.resume-kicker,
+.project-kicker {
+  margin: 0 0 8px;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(26, 23, 20, 0.52);
+}
+
+.resume-card h2,
+.project-card h3 {
+  margin: 0 0 6px;
+  font-family: var(--serif);
+  font-size: clamp(16px, 2.4dvh, 24px);
+  line-height: 1.05;
+}
+
+.resume-meta,
+.resume-card p,
+.project-card p {
+  margin: 0 0 6px;
+  font-family: var(--mono);
+  font-size: clamp(10px, 1.4dvh, 12px);
+  line-height: 1.4;
+}
+
+.resume-card p:last-child,
+.project-card p:last-child {
+  margin-bottom: 0;
+}
+
+body.is-covering:not(.is-paged) {
+  overflow: hidden !important;
+  height: 100% !important;
+}
+
+body.is-paged {
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: auto;
+}
+
+body.is-paged .hero {
+  height: 0;
+  min-height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+body.is-paged .edition {
+  position: relative;
+  inset: auto;
+  height: 100dvh;
+  touch-action: pan-y;
+}
+
+body.is-paged .topbar {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .studio {
+    height: auto;
+    min-height: 100dvh;
+    grid-template-columns: 1fr;
+  }
+
+  .studio-wheel {
+    min-height: 88vw;
+    border-right: 0;
+    border-bottom: 1px solid var(--studio-line);
+  }
+
+  .studio-side {
+    min-height: 110dvh;
+  }
+
+  .wheel {
+    width: min(84%, 76vw, 520px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skill-logo {
+    filter: none !important;
+    opacity: 1 !important;
+  }
+
+  .hub-notch {
+    animation: none;
+    fill: rgba(26, 23, 20, 0.45);
+  }
+
+  .wheel-veil {
+    background: transparent;
+  }
+}

@@ -519,8 +519,13 @@
     const interactive = p > 0.08;
     const covering = p > 0.02;
     const unwrapped = p > 0.92;
+    const paged = p > 0.985;
     const bucket =
-      (tearing ? 1 : 0) | (interactive ? 2 : 0) | (covering ? 4 : 0) | (unwrapped ? 8 : 0);
+      (tearing ? 1 : 0) |
+      (interactive ? 2 : 0) |
+      (covering ? 4 : 0) |
+      (unwrapped ? 8 : 0) |
+      (paged ? 16 : 0);
     if (bucket === lastBucket) return;
     lastBucket = bucket;
     edition.classList.toggle("is-tearing", tearing);
@@ -528,7 +533,10 @@
     edition.setAttribute("aria-hidden", interactive ? "false" : "true");
     document.body.classList.toggle("is-covering", covering);
     document.body.classList.toggle("is-unwrapped", unwrapped);
+    document.body.classList.toggle("is-paged", paged);
+    if (!paged && window.scrollY) window.scrollTo(0, 0);
     if (unwrapCue) unwrapCue.style.pointerEvents = p > 0.55 ? "none" : "auto";
+    if (paged) kickWheel();
   }
 
   function kickCover() {
@@ -584,6 +592,7 @@
 
   function onCoverDelta(px) {
     if (coverTarget >= 0.999 && px > 0) return false;
+    if (coverTarget >= 0.999 && window.scrollY > 2) return false;
     if (coverTarget <= 0 && px < 0) return false;
     wheelAcc += px;
     kickCover();
@@ -599,6 +608,7 @@
   wrapBack?.addEventListener("click", (e) => {
     e.preventDefault();
     e.stopPropagation();
+    window.scrollTo(0, 0);
     setCoverSnap(0);
   });
 
@@ -610,6 +620,7 @@
   window.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && coverTarget > 0) {
       if (document.querySelector(".panel:not([hidden])")) return;
+      window.scrollTo(0, 0);
       setCoverSnap(0);
     }
   });
@@ -630,6 +641,7 @@
     el.addEventListener("pointerdown", (e) => {
       if (e.button && e.button !== 0) return;
       if (e.target.closest("a, .wrap-back, .paper-bio, .paper-toc, .paper-photo")) return;
+      if (document.body.classList.contains("is-paged") && window.scrollY > 4) return;
       drag = {
         id: e.pointerId,
         y: e.clientY,
@@ -639,7 +651,7 @@
       };
       snapping = false;
       el.setPointerCapture?.(e.pointerId);
-      if (el !== unwrapCue) e.preventDefault();
+      if (el !== unwrapCue && !document.body.classList.contains("is-paged")) e.preventDefault();
       kickCover();
     });
   }
@@ -666,13 +678,288 @@
     else if (cover < 0.06) setCoverSnap(0);
   }
 
+  let wheelItems = [];
+  let wheelRings = [];
+  let wheelAngle = 0;
+  let wheelRaf = 0;
+  let lastWheelT = 0;
+  const reduceWheel = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const ICON = "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/";
+  const SI = "https://cdn.simpleicons.org/";
+
+  function skillSrc(skill) {
+    if (skill.u) return skill.u;
+    if (skill.d) return ICON + skill.d;
+    if (skill.s) return SI + skill.s;
+    return "";
+  }
+
+  function markLogo(node, skill) {
+    const span = document.createElement("span");
+    span.textContent = skill.m || skill.name.slice(0, 3);
+    node.appendChild(span);
+  }
+
+  function buildWheel() {
+    const mount = document.getElementById("skillWheel");
+    if (!mount) return;
+    const skills = [
+      { name: "AWS", d: "amazonwebservices/amazonwebservices-plain-wordmark.svg" },
+      { name: "EC2", m: "EC2" },
+      { name: "IAM", m: "IAM" },
+      { name: "VPC", m: "VPC" },
+      { name: "EKS", m: "EKS" },
+      { name: "S3", m: "S3" },
+      { name: "Route 53", m: "R53" },
+      { name: "Docker", d: "docker/docker-original.svg" },
+      { name: "Kubernetes", d: "kubernetes/kubernetes-plain.svg" },
+      { name: "Terraform", d: "terraform/terraform-original.svg" },
+      { name: "ArgoCD", s: "argo" },
+      { name: "GitHub Actions", s: "githubactions" },
+      { name: "CI/CD", m: "CI" },
+      { name: "Linux", d: "linux/linux-original.svg" },
+      { name: "Shell Scripting", s: "gnubash" },
+      { name: "Git", d: "git/git-original.svg" },
+      { name: "GitHub", d: "github/github-original.svg" },
+      { name: "GCP", d: "googlecloud/googlecloud-original.svg" },
+      { name: "Java", d: "java/java-original.svg" },
+      { name: "Python", d: "python/python-original.svg" },
+      { name: "C++", d: "cplusplus/cplusplus-original.svg" },
+      { name: "C", d: "c/c-original.svg" },
+      { name: "JavaScript", d: "javascript/javascript-original.svg" },
+      { name: "TypeScript", d: "typescript/typescript-original.svg" },
+      { name: "SQL", d: "azuresqldatabase/azuresqldatabase-original.svg" },
+      { name: "Bash", d: "bash/bash-original.svg" },
+      { name: "React", d: "react/react-original.svg" },
+      { name: "Node.js", d: "nodejs/nodejs-original.svg" },
+      { name: "REST APIs", m: "API" },
+      { name: "WebSockets", m: "WS" },
+      { name: "Express.js", d: "express/express-original.svg" },
+      { name: "Playwright", d: "playwright/playwright-original.svg" },
+      { name: "OpenAI API", u: "https://cdn.jsdelivr.net/npm/simple-icons@13.21.0/icons/openai.svg" },
+      { name: "PostgreSQL", d: "postgresql/postgresql-original.svg" },
+      { name: "MySQL", d: "mysql/mysql-original.svg" },
+      { name: "MongoDB", d: "mongodb/mongodb-original.svg" },
+      { name: "Firebase", d: "firebase/firebase-plain.svg" },
+      { name: "Redis", d: "redis/redis-original.svg" },
+      { name: "Django", d: "django/django-plain.svg" },
+      { name: "Socket.io", d: "socketio/socketio-original.svg" },
+      { name: "FastAPI", s: "fastapi" },
+      { name: "LangChain", s: "langchain" },
+      { name: "RAG", m: "RAG" },
+      { name: "NLP", m: "NLP" },
+      { name: "ETL/ELT", m: "ETL" },
+      { name: "Data Structures & Algorithms", m: "DSA" },
+      { name: "Object-Oriented Programming", m: "OOP" },
+      { name: "Operating Systems", m: "OS" },
+      { name: "Computer Networks", m: "NET" },
+      { name: "Database Management Systems", m: "DB" },
+      { name: "System Design", m: "SD" },
+      { name: "OAuth", s: "auth0" },
+    ];
+    const rings = [
+      { r: 0.145, n: 8, dir: 1 },
+      { r: 0.27, n: 12, dir: -1 },
+      { r: 0.39, n: 14, dir: 1 },
+      { r: 0.505, n: 18, dir: -1 },
+    ];
+    wheelRings = rings;
+    const ns = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(ns, "svg");
+    svg.setAttribute("class", "wheel-frame");
+    svg.setAttribute("viewBox", "0 0 100 100");
+    svg.setAttribute("aria-hidden", "true");
+    rings.forEach((ring) => {
+      const c = document.createElementNS(ns, "circle");
+      c.setAttribute("class", "wheel-ring");
+      c.setAttribute("cx", "50");
+      c.setAttribute("cy", "50");
+      c.setAttribute("r", String(ring.r * 100));
+      svg.appendChild(c);
+    });
+    function svgEl(name, attrs) {
+      const el = document.createElementNS(ns, name);
+      Object.entries(attrs).forEach(([key, value]) => el.setAttribute(key, String(value)));
+      return el;
+    }
+
+    const hub = document.createElementNS(ns, "g");
+    hub.setAttribute("class", "wheel-hub");
+    hub.setAttribute("transform", "translate(50 50)");
+    hub.append(
+      svgEl("circle", { class: "wheel-core", r: "6.8", "stroke-width": "0.28" }),
+      svgEl("rect", {
+        class: "hub-pkg",
+        x: "-2.9",
+        y: "-2.9",
+        width: "5.8",
+        height: "5.8",
+        rx: "0.38",
+        "stroke-width": "0.3",
+      }),
+      svgEl("rect", {
+        class: "hub-die",
+        x: "-1.72",
+        y: "-1.72",
+        width: "3.44",
+        height: "3.44",
+        rx: "0.16",
+        "stroke-width": "0.18",
+      }),
+      svgEl("path", {
+        class: "hub-code",
+        d: "M-1.08-0.72l-0.72 0.72 0.72 0.72M1.08-0.72l0.72 0.72-0.72 0.72M-0.22 0.82l0.48-1.64",
+        "stroke-width": "0.32",
+      }),
+      svgEl("circle", { class: "hub-notch", cx: "-2.05", cy: "-2.05", r: "0.26" })
+    );
+    const pins = document.createElementNS(ns, "g");
+    pins.setAttribute("class", "hub-pins");
+    pins.setAttribute("stroke-width", "0.26");
+    const edge = 2.9;
+    const pin = 1.08;
+    [-1.35, 0, 1.35].forEach((offset) => {
+      pins.append(
+        svgEl("line", { x1: offset, y1: -edge, x2: offset, y2: -(edge + pin) }),
+        svgEl("line", { x1: offset, y1: edge, x2: offset, y2: edge + pin }),
+        svgEl("line", { x1: -edge, y1: offset, x2: -(edge + pin), y2: offset }),
+        svgEl("line", { x1: edge, y1: offset, x2: edge + pin, y2: offset })
+      );
+    });
+    hub.insertBefore(pins, hub.children[1]);
+    svg.append(hub);
+
+    const orbit = document.createElement("div");
+    orbit.className = "wheel-orbit";
+    const veil = document.createElement("div");
+    veil.className = "wheel-veil";
+
+    wheelItems = [];
+    let cursor = 0;
+    rings.forEach((ring, ringIndex) => {
+      const slice = skills.slice(cursor, cursor + ring.n);
+      cursor += ring.n;
+      const step = (Math.PI * 2) / slice.length;
+      slice.forEach((skill, i) => {
+        const base = i * step + (ringIndex % 2 ? step * 0.5 : 0) + ringIndex * 0.08;
+        const node = document.createElement("div");
+        node.className = "skill-logo";
+        node.title = skill.name;
+        const src = skillSrc(skill);
+        if (src) {
+          const img = document.createElement("img");
+          img.alt = skill.name;
+          img.src = src;
+          img.loading = "eager";
+          img.addEventListener("error", () => {
+            img.remove();
+            markLogo(node, skill);
+          });
+          node.appendChild(img);
+        } else {
+          markLogo(node, skill);
+        }
+        orbit.appendChild(node);
+        wheelItems.push({ node, r: ring.r, base, dir: ring.dir });
+      });
+    });
+
+    mount.replaceChildren(svg, orbit, veil);
+    fitLogos();
+    placeWheel(0);
+    if (typeof ResizeObserver !== "undefined") {
+      new ResizeObserver(() => {
+        fitLogos();
+        placeWheel(wheelAngle);
+      }).observe(mount);
+    }
+  }
+
+  function fitLogos() {
+    const size = document.getElementById("skillWheel")?.clientWidth || 1;
+    let space = Infinity;
+    wheelRings.forEach((ring, i) => {
+      space = Math.min(space, (2 * Math.PI * ring.r * size) / ring.n);
+      if (i) space = Math.min(space, (ring.r - wheelRings[i - 1].r) * size);
+    });
+    const logo = Math.max(38, Math.min(64, space * 0.72));
+    wheelItems.forEach((item) => {
+      item.node.style.width = `${logo.toFixed(1)}px`;
+      item.node.style.height = `${logo.toFixed(1)}px`;
+    });
+  }
+
+  function smoothstep(edge0, edge1, x) {
+    const t = Math.max(0, Math.min(1, (x - edge0) / (edge1 - edge0)));
+    return t * t * (3 - 2 * t);
+  }
+
+  function placeWheel(t) {
+    const size = document.getElementById("skillWheel")?.clientWidth || 1;
+    wheelItems.forEach((item) => {
+      const ang = item.base + t * item.dir;
+      const x = Math.sin(ang);
+      const y = -Math.cos(ang);
+      const px = x * item.r * size;
+      const py = y * item.r * size;
+      const into = reduceWheel ? 0 : smoothstep(0.24, -0.32, x);
+      const blur = into * 7.5;
+      item.node.style.transform = `translate(-50%, -50%) translate(${px}px, ${py}px)`;
+      item.node.style.filter = blur > 0.18 ? `blur(${blur.toFixed(2)}px)` : "none";
+      item.node.style.opacity = String(1 - into * 0.2);
+      item.node.style.zIndex = String(Math.round((1 + x) * 10));
+    });
+  }
+
+  function kickWheel() {
+    if (!wheelRaf) wheelRaf = requestAnimationFrame(tickWheel);
+  }
+
+  function tickWheel(now) {
+    wheelRaf = 0;
+    if (!document.body.classList.contains("is-paged")) {
+      lastWheelT = 0;
+      return;
+    }
+    const dt = lastWheelT ? Math.min(48, now - lastWheelT) : 16.67;
+    lastWheelT = now;
+    if (!reduceWheel) wheelAngle += dt * 0.00015;
+    placeWheel(wheelAngle);
+    wheelRaf = requestAnimationFrame(tickWheel);
+  }
+
+  function watchStudio() {
+    const studio = document.getElementById("studio");
+    if (!studio || !window.IntersectionObserver) {
+      studio?.classList.add("is-in");
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          studio.classList.toggle("is-in", entry.isIntersecting);
+        });
+      },
+      { threshold: 0.28 }
+    );
+    io.observe(studio);
+  }
+
   window.addEventListener("pointerup", endDrag);
   window.addEventListener("pointercancel", endDrag);
-  window.addEventListener("resize", () => applyCover(cover));
-  window.visualViewport?.addEventListener("resize", () => applyCover(cover));
+  window.addEventListener("resize", () => {
+    applyCover(cover);
+    placeWheel(wheelAngle);
+  });
+  window.visualViewport?.addEventListener("resize", () => {
+    applyCover(cover);
+    placeWheel(wheelAngle);
+  });
 
   initRip();
   cloneHalves();
+  buildWheel();
+  watchStudio();
   applyCover(0);
   applyTime("day");
   applyWeather("rain");
