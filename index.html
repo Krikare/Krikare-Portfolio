@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="css/styles.css" />
     <link rel="stylesheet" href="css/newspaper.css" />
     <link rel="stylesheet" href="css/studio.css" />
+    <link rel="stylesheet" href="css/scroll.css?v=plain1" />
   </head>
   <body data-weather="rain" data-time="day">
     <canvas id="noiseCanvas" aria-hidden="true"></canvas>
@@ -201,22 +202,22 @@
       </div>
       <div class="studio-side">
         <div class="resume-row">
-          <article class="resume-card" id="resume1">
+          <button class="resume-card" id="resume1" type="button" data-resume="devops" data-pdf="assets/karthikDevops.pdf" data-page="assets/resume-devops.png">
             <p class="resume-kicker">Resume 1</p>
             <h2>Karthik Reddy</h2>
             <p class="resume-meta">Systems · Cloud · Networks</p>
             <p>B.Tech CSE · LPU · 2022–2026</p>
             <p>Intern — Digital i360</p>
             <p>AWS · Docker · K8s · Terraform · Python</p>
-          </article>
-          <article class="resume-card" id="resume2">
+          </button>
+          <button class="resume-card" id="resume2" type="button" data-resume="main" data-pdf="assets/MainCV.pdf" data-page="assets/resume-main.png">
             <p class="resume-kicker">Resume 2</p>
             <h2>Record</h2>
             <p class="resume-meta">Certs · Ranks</p>
             <p>GCP Associate Cloud Engineer</p>
             <p>Amazon ML School — Top 1%</p>
             <p>LeetCode Knight · CF Expert</p>
-          </article>
+          </button>
         </div>
         <div class="project-grid">
           <a class="project-card" href="https://github.com/sunny71" target="_blank" rel="noreferrer">
@@ -324,6 +325,23 @@
       </ul>
     </section>
 
+    <div class="scroll-view" id="scrollView" hidden>
+      <button class="scroll-backdrop" id="scrollBackdrop" type="button" aria-label="Close resume"></button>
+      <div
+        class="scroll-sheet"
+        id="scrollSheet"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Resume"
+      >
+        <img class="resume-page" id="resumePage" alt="Resume" />
+      </div>
+      <a class="scroll-download" id="scrollDownload" href="assets/karthikDevops.pdf" download>Download</a>
+      <button class="scroll-close" id="scrollClose" type="button">Close</button>
+    </div>
+
     <script src="js/app.js"></script>
+    <script src="js/resume-scroll.js?v=plain1"></script>
   </body>
 </html>
+

@@ -619,6 +619,7 @@
 
   window.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && coverTarget > 0) {
+      if (!document.getElementById("scrollView")?.hidden) return;
       if (document.querySelector(".panel:not([hidden])")) return;
       window.scrollTo(0, 0);
       setCoverSnap(0);
