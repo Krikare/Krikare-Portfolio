@@ -133,10 +133,9 @@ body.is-unwrapped .panel {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  overflow: hidden;
+  overflow: visible;
 }
 
-.paper-mast,
 .paper-hed,
 .paper-grid {
   border-top: 1px solid var(--paper-rule);
@@ -149,8 +148,28 @@ body.is-unwrapped .panel {
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: 12px;
-  padding: 7px 0;
+  padding: 8px 0;
   flex: 0 0 auto;
+}
+
+.paper-mast::before,
+.paper-mast::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  width: min(calc(100vw - 88px), calc(100% + 200px));
+  height: 3px;
+  transform: translateX(-50%);
+  pointer-events: none;
+  background: var(--paper-rule);
+}
+
+.paper-mast::before {
+  top: 0;
+}
+
+.paper-mast::after {
+  bottom: 0;
 }
 
 .wrap-back {
@@ -196,6 +215,8 @@ body.is-unwrapped .panel {
   font-weight: 700;
   letter-spacing: 0.04em;
   text-align: center;
+  text-transform: none;
+  white-space: nowrap;
 }
 
 .paper-hed {
@@ -231,6 +252,7 @@ body.is-unwrapped .panel {
   border-top: 0;
   flex: 1;
   min-height: 0;
+  overflow: hidden;
 }
 
 .paper-col {
@@ -366,7 +388,7 @@ body.is-unwrapped .panel {
   .paper {
     width: calc(100% - 16px);
     height: 100%;
-    overflow: hidden;
+    overflow: visible;
   }
 
   .paper-mast {
