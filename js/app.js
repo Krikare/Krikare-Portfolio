@@ -499,6 +499,17 @@
     tearClip();
   }
 
+  function playPaperReels() {
+    document.querySelectorAll(".paper-live video.paper-reel").forEach((video) => {
+      video.muted = true;
+      video.loop = true;
+      video.playsInline = true;
+      const go = () => video.play().catch(() => {});
+      if (video.readyState >= 2) go();
+      else video.addEventListener("canplay", go, { once: true });
+    });
+  }
+
   function viewportH() {
     return window.visualViewport?.height || innerHeight;
   }
@@ -536,7 +547,10 @@
     document.body.classList.toggle("is-paged", paged);
     if (!paged && window.scrollY) window.scrollTo(0, 0);
     if (unwrapCue) unwrapCue.style.pointerEvents = p > 0.55 ? "none" : "auto";
-    if (paged) kickWheel();
+    if (paged) {
+      kickWheel();
+      playPaperReels();
+    }
   }
 
   function kickCover() {
@@ -641,7 +655,7 @@
   function dragFrom(el) {
     el.addEventListener("pointerdown", (e) => {
       if (e.button && e.button !== 0) return;
-      if (e.target.closest("a, .wrap-back, .paper-bio, .paper-toc, .paper-photo")) return;
+      if (e.target.closest("a, button, .wrap-back, .paper-bio, .paper-toc, .paper-photo, .paper-work, .paper-signals, .paper-stack, .hed-aside, .paper-stats")) return;
       if (document.body.classList.contains("is-paged") && window.scrollY > 4) return;
       drag = {
         id: e.pointerId,
@@ -966,6 +980,7 @@
   applyWeather("rain");
   if (/debug=hots/.test(location.search)) document.body.classList.add("debug-hots");
   if (/edition/.test(location.search)) setCoverImmediate(1);
+  playPaperReels();
   sizeCanvases();
   seedRain();
   seedBirds();

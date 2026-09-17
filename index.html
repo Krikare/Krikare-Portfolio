@@ -15,7 +15,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/styles.css" />
-    <link rel="stylesheet" href="css/newspaper.css?v=flex1" />
+    <link rel="stylesheet" href="css/newspaper.css?v=fit1" />
     <link rel="stylesheet" href="css/studio.css" />
     <link rel="stylesheet" href="css/scroll.css?v=plain1" />
   </head>
@@ -128,28 +128,111 @@
         </header>
 
         <div class="paper-hed">
-          <h1>
-            <span>Automate</span>
-            <span>the chaos.</span>
-          </h1>
-          <p class="paper-dek">
-            A computer-science student working at the intersection of infrastructure, automation, and the
-            people who depend on it.
-          </p>
+          <div class="hed-main">
+            <h1>
+              <span>Automate</span>
+              <span>the chaos.</span>
+            </h1>
+            <p class="paper-dek">
+              A computer-science student working at the intersection of infrastructure, automation, and the
+              people who depend on it.
+            </p>
+          </div>
+          <aside class="hed-aside">
+            <p class="hed-claim">
+              I like building systems that stay useful when the traffic, data, and expectations get messy.
+            </p>
+            <p class="hed-note">
+              Full-stack work with a systems bias — services, pipelines, and the ops that keep them honest
+              after launch.
+            </p>
+            <div class="paper-stats" aria-label="By the numbers">
+              <p class="paper-label">By the numbers</p>
+              <ul>
+                <li>
+                  <svg class="paper-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5m0 14h16M8 15l3-3 3 2 5-6"/></svg>
+                  <b>5,000+</b>
+                  <span>monthly leads processed</span>
+                </li>
+                <li>
+                  <svg class="paper-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 4v6c0 5-3.5 7.5-7 9-3.5-1.5-7-4-7-9V7l7-4z"/></svg>
+                  <b>99.9%</b>
+                  <span>data integrity</span>
+                </li>
+                <li>
+                  <svg class="paper-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                  <b>1,000+</b>
+                  <span>community chat users</span>
+                </li>
+                <li>
+                  <svg class="paper-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19l6-6 4 4 6-8"/><path d="M14 9h6v6"/></svg>
+                  <b>60%</b>
+                  <span>faster release cycle</span>
+                </li>
+                <li>
+                  <svg class="paper-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                  <b>&lt;10s</b>
+                  <span>comment drafts</span>
+                </li>
+              </ul>
+            </div>
+          </aside>
         </div>
 
         <div class="paper-grid">
-          <article class="paper-col paper-bio">
-            <h2>The systems builder</h2>
-            <p>
-              <span class="drop">I</span>treat infrastructure as architecture: rooms that still work when the
-              weather turns. Placeholder copy — swap this bio later without changing the layout.
-            </p>
-            <p>
-              Cloud, networks, DevOps, and SRE. Pipelines, graphs, runbooks. More lines can land here when
-              you are ready.
-            </p>
-          </article>
+          <div class="paper-col paper-left">
+            <article class="paper-bio">
+              <h2>The systems builder</h2>
+              <p>
+                <span class="drop">I</span>treat infrastructure as architecture: rooms that still work when the
+                weather turns. Pipelines, graphs, runbooks — the parts you only notice when they fail.
+              </p>
+            </article>
+            <section class="paper-work">
+              <h2>Selected work</h2>
+              <ul>
+                <li>
+                  <span class="work-ico" aria-hidden="true">
+                    <svg class="paper-ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>
+                  </span>
+                  <div>
+                    <b>TraviiA — AI travel planning</b>
+                    <span class="work-meta">RAG + Gemini + FastAPI</span>
+                    <ul class="work-pts">
+                      <li>Turns preferences into a trip, then keeps Gemini on that same thread.</li>
+                      <li>Grounds replies in travel chatter so the advice feels local, not canned.</li>
+                    </ul>
+                  </div>
+                </li>
+                <li>
+                  <span class="work-ico" aria-hidden="true">
+                    <svg class="paper-ico" viewBox="0 0 24 24"><path d="M3 10l9-5 9 5-9 5-9-5z"/><path d="M7 12v5.2c2.2 1.4 4.2 2 5 2s2.8-.6 5-2V12"/><path d="M12 15v6"/></svg>
+                  </span>
+                  <div>
+                    <b>SemGuide — student platform</b>
+                    <span class="work-meta">Django + React + AWS</span>
+                    <ul class="work-pts">
+                      <li>One hub for notes and resources, gated by Django roles.</li>
+                      <li>React front, Postgres back, sitting on EC2.</li>
+                    </ul>
+                  </div>
+                </li>
+                <li>
+                  <span class="work-ico" aria-hidden="true">
+                    <svg class="paper-ico" viewBox="0 0 24 24"><path d="M21 15a4 4 0 0 1-4 4H8l-4 3V7a4 4 0 0 1 4-4h9a4 4 0 0 1 4 4z"/><circle cx="9" cy="11" r="0.9"/><circle cx="13" cy="11" r="0.9"/><circle cx="17" cy="11" r="0.9"/></svg>
+                  </span>
+                  <div>
+                    <b>WaveChat — real-time communication</b>
+                    <span class="work-meta">Socket.io + Node.js</span>
+                    <ul class="work-pts">
+                      <li>Live rooms for a 1,000-person community, under 200ms.</li>
+                      <li>Emoji, files, and Google sign-in in the same lobby.</li>
+                    </ul>
+                  </div>
+                </li>
+              </ul>
+            </section>
+          </div>
 
           <figure class="paper-col paper-fig">
             <div class="paper-photo">
@@ -168,43 +251,104 @@
             <figcaption>Fig. 001 — Campus edition.</figcaption>
           </figure>
 
-          <nav class="paper-col paper-toc" aria-label="Inside this portfolio">
-            <h2>Inside this portfolio</h2>
-            <ol>
-              <li>
-                <a href="#about">
-                  <span class="toc-row"><b>About</b><i>P. 03</i></span>
-                  <em>Who I am, in print.</em>
-                </a>
-              </li>
-              <li>
-                <a href="#craft">
-                  <span class="toc-row"><b>Skills &amp; Projects</b><i>P. 06</i></span>
-                  <em>What I build, and how.</em>
-                </a>
-              </li>
-              <li>
-                <a href="#education">
-                  <span class="toc-row"><b>Education</b><i>P. 09</i></span>
-                  <em>The climb through school.</em>
-                </a>
-              </li>
-              <li>
-                <a href="#achievements">
-                  <span class="toc-row"><b>Achievements</b><i>P. 12</i></span>
-                  <em>Certs, ranks, the record.</em>
-                </a>
-              </li>
-              <li>
-                <a href="#contact">
-                  <span class="toc-row"><b>Contact</b><i>P. 15</i></span>
-                  <em>How to reach me.</em>
-                </a>
-              </li>
-            </ol>
-          </nav>
+          <div class="paper-col paper-mid">
+            <nav class="paper-toc" aria-label="Inside this portfolio">
+              <h2>Inside this portfolio</h2>
+              <ol>
+                <li>
+                  <a href="#about">
+                    <span class="toc-row"><b>About</b><i>P. 03</i></span>
+                    <em>Who I am, in print.</em>
+                  </a>
+                </li>
+                <li>
+                  <a href="#craft">
+                    <span class="toc-row"><b>Skills &amp; Projects</b><i>P. 06</i></span>
+                    <em>What I build, and how.</em>
+                  </a>
+                </li>
+                <li>
+                  <a href="#education">
+                    <span class="toc-row"><b>Education</b><i>P. 09</i></span>
+                    <em>The climb through school.</em>
+                  </a>
+                </li>
+                <li>
+                  <a href="#achievements">
+                    <span class="toc-row"><b>Achievements</b><i>P. 12</i></span>
+                    <em>Certs, ranks, the record.</em>
+                  </a>
+                </li>
+                <li>
+                  <a href="#contact">
+                    <span class="toc-row"><b>Contact</b><i>P. 15</i></span>
+                    <em>How to reach me.</em>
+                  </a>
+                </li>
+              </ol>
+            </nav>
+            <section class="paper-signals">
+              <h2>Signals</h2>
+              <ul>
+                <li>
+                  <svg class="paper-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v8l-5 3-5-3V4z"/></svg>
+                  <span><b>GDG Challenge</b> Global Rank 304</span>
+                </li>
+                <li>
+                  <svg class="paper-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg>
+                  <span><b>Google Cloud</b> Associate Cloud Engineer</span>
+                </li>
+                <li>
+                  <svg class="paper-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.2 6.6H21l-5.4 4 2.1 6.4L12 15.8 6.3 19l2.1-6.4L3 8.6h6.8L12 2z"/></svg>
+                  <span><b>Amazon ML School</b> Top 1%</span>
+                </li>
+                <li>
+                  <svg class="paper-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M12 18v3"/></svg>
+                  <span><b>LeetCode Knight</b> max 1887</span>
+                </li>
+              </ul>
+            </section>
+          </div>
+
+          <div class="paper-col paper-right">
+            <section class="paper-stack">
+              <h2>Tech stack</h2>
+              <dl>
+                <div>
+                  <dt>Languages</dt>
+                  <dd>Java, C++, JavaScript, TypeScript, Python, SQL</dd>
+                </div>
+                <div>
+                  <dt>Web &amp; backend</dt>
+                  <dd>React, Node.js, Express, FastAPI</dd>
+                </div>
+                <div>
+                  <dt>Databases &amp; data</dt>
+                  <dd>PostgreSQL, MongoDB, Redis</dd>
+                </div>
+                <div>
+                  <dt>Cloud &amp; tools</dt>
+                  <dd>GCP, AWS, Docker, Terraform, Git</dd>
+                </div>
+                <div>
+                  <dt>Focus areas</dt>
+                  <dd>Full-stack development, system design</dd>
+                </div>
+              </dl>
+            </section>
+            <blockquote class="paper-quote">
+              <p>
+                I’m happiest somewhere between writing the service, tracing the bottleneck, and making the
+                whole thing easier to operate.
+              </p>
+            </blockquote>
+          </div>
         </div>
-        <div class="paper-bar" aria-hidden="true"></div>
+
+        <footer class="paper-foot">
+          <p>Selected works · Systems · Cloud · Automation · 2026</p>
+          <p>Portfolio / 01</p>
+        </footer>
       </div>
       </div>
     </section>
