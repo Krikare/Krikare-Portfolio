@@ -247,12 +247,12 @@ body.is-unwrapped .panel {
 
 .paper-name {
   margin: 0;
-  font-family: var(--paper-serif);
+  font-family: "Rubik Dirt", var(--paper-serif);
   font-size: clamp(16px, 2.2vw, 28px);
-  font-weight: 700;
+  font-weight: 400;
   letter-spacing: 0.04em;
   text-align: center;
-  text-transform: none;
+  text-transform: uppercase;
   white-space: nowrap;
   justify-self: center;
 }
