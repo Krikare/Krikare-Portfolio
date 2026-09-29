@@ -255,6 +255,9 @@ html:has(body.is-paged) {
 }
 
 .profile-card {
+  --glow: rgba(26, 23, 20, 0.32);
+  position: relative;
+  isolation: isolate;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -272,11 +275,50 @@ html:has(body.is-paged) {
   line-height: 1;
 }
 
+.profile-card:has(.profile-ico-linkedin) {
+  --glow: rgba(10, 102, 194, 0.48);
+}
+
+.profile-card:has(.profile-ico-leetcode) {
+  --glow: rgba(255, 161, 22, 0.52);
+}
+
+.profile-card::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 38%;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--glow) 0%, transparent 72%);
+  transform: translate(-50%, -50%) scale(0.65);
+  opacity: 0;
+  filter: blur(5px);
+  pointer-events: none;
+  z-index: 0;
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.profile-card:hover::before,
+.profile-card:focus-visible::before {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
 .profile-ico {
+  position: relative;
+  z-index: 1;
   width: clamp(22px, 4.2dvh, 32px);
   height: clamp(22px, 4.2dvh, 32px);
   display: block;
   color: var(--studio-ink);
+  transition: filter 0.22s ease;
+}
+
+.profile-card:hover .profile-ico,
+.profile-card:focus-visible .profile-ico {
+  filter: drop-shadow(0 0 8px var(--glow));
 }
 
 .profile-ico-linkedin {
@@ -457,5 +499,10 @@ body.is-paged .topbar {
 
   .wheel-veil {
     background: transparent;
+  }
+
+  .profile-card::before,
+  .profile-ico {
+    transition: none;
   }
 }
