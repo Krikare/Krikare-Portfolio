@@ -4,6 +4,24 @@
   html,
   body {
     overflow-x: hidden;
+    overscroll-behavior: none;
+  }
+
+  body:not(.is-paged) {
+    overflow: hidden;
+    touch-action: none;
+  }
+
+  .hero,
+  .campus-wrap,
+  .hotspots,
+  .unwrap-cue {
+    touch-action: none;
+  }
+
+  body.is-paged {
+    touch-action: pan-y;
+    overscroll-behavior-y: contain;
   }
 
   .topbar {

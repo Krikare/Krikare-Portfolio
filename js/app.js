@@ -629,6 +629,7 @@
   unwrapCue?.addEventListener("click", (e) => {
     e.preventDefault();
     e.stopPropagation();
+    if (phoneOn() && coverTarget < 0.92) setCoverSnap(1);
   });
 
   window.addEventListener("keydown", (e) => {
@@ -650,10 +651,16 @@
     { passive: false }
   );
 
+  const phoneQ = window.matchMedia("(max-width: 768px)");
+  function phoneOn() {
+    return phoneQ.matches;
+  }
+
   const dragHandles = [unwrapCue, edition].filter(Boolean);
 
   function dragFrom(el) {
     el.addEventListener("pointerdown", (e) => {
+      if (phoneOn() && e.pointerType === "touch") return;
       if (e.button && e.button !== 0) return;
       if (e.target.closest("a, button, .wrap-back, .paper-bio, .paper-toc, .paper-photo, .paper-work, .paper-signals, .paper-stack, .hed-aside, .paper-stats")) return;
       if (document.body.classList.contains("is-paged") && window.scrollY > 4) return;
@@ -962,6 +969,85 @@
 
   window.addEventListener("pointerup", endDrag);
   window.addEventListener("pointercancel", endDrag);
+
+  let touchDrag = null;
+
+  function phoneBlocked(target) {
+    if (!target?.closest) return false;
+    if (document.querySelector(".panel:not([hidden])")) return true;
+    if (!document.getElementById("scrollView")?.hidden) return true;
+    if (target.closest(".topbar, .tools, .menu-dropdown, .panel, .scroll-view, .wrap-back")) return true;
+    if (document.body.classList.contains("is-paged") && target.closest("a, .paper-bio, .paper-toc, .paper-photo, .paper-work, .paper-signals, .paper-stack, .hed-aside, .paper-stats, .studio")) {
+      return window.scrollY > 4;
+    }
+    return false;
+  }
+
+  function phoneSnap() {
+    if (!touchDrag) return;
+    const net = cover - touchDrag.start;
+    const elapsed = Math.max(16, performance.now() - touchDrag.t0);
+    const flick = (touchDrag.y0 - touchDrag.lastY) / elapsed;
+    const fromCue = touchDrag.fromCue;
+    const moved = touchDrag.moved;
+    touchDrag = null;
+    if (fromCue && moved < 12) {
+      setCoverSnap(1);
+      return;
+    }
+    if (moved < 12) return;
+    if (flick > 0.32 || net > 0.1 || cover > 0.32) setCoverSnap(1);
+    else if (flick < -0.32 || net < -0.1 || cover < 0.18) setCoverSnap(0);
+    else setCoverSnap(cover >= 0.45 ? 1 : 0);
+  }
+
+  document.addEventListener(
+    "touchstart",
+    (e) => {
+      if (!phoneOn() || e.touches.length !== 1) return;
+      if (phoneBlocked(e.target)) return;
+      const t = e.touches[0];
+      touchDrag = {
+        y0: t.clientY,
+        lastY: t.clientY,
+        t0: performance.now(),
+        start: cover,
+        moved: 0,
+        fromCue: !!e.target.closest?.("#unwrapCue"),
+      };
+      snapping = false;
+    },
+    { passive: true, capture: true }
+  );
+
+  document.addEventListener(
+    "touchmove",
+    (e) => {
+      if (!phoneOn() || !touchDrag || e.touches.length !== 1) return;
+      const t = e.touches[0];
+      const dy = touchDrag.y0 - t.clientY;
+      touchDrag.lastY = t.clientY;
+      touchDrag.moved = Math.max(touchDrag.moved, Math.abs(dy));
+      const paged = document.body.classList.contains("is-paged");
+      if (paged && window.scrollY > 2) return;
+      if (paged && dy > 0) return;
+      if (touchDrag.moved < 10) return;
+      if (coverTarget <= 0 && dy < 0) return;
+      e.preventDefault();
+      coverTarget = clamp(touchDrag.start + dy / (viewportH() * 0.34), 0, 1);
+      kickCover();
+    },
+    { passive: false, capture: true }
+  );
+
+  document.addEventListener("touchend", phoneSnap, { passive: true, capture: true });
+  document.addEventListener(
+    "touchcancel",
+    () => {
+      touchDrag = null;
+    },
+    { capture: true }
+  );
   window.addEventListener("resize", () => {
     applyCover(cover);
     placeWheel(wheelAngle);
