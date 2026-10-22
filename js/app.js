@@ -282,7 +282,7 @@
   const PINS = {
     parliament: { title: "Parliament", sub: "Skills & Projects", x: 28, y: 22 },
     hawa: { title: "Hawa Mahal", sub: "Contact", x: 52, y: 7 },
-    qutub: { title: "Qutub Minar", sub: "Education", x: 74, y: 8 },
+    qutub: { title: "Qutub Minar", sub: "Education", x: 83.4, y: 30 },
     fort: { title: "Red Fort", sub: "Achievements", x: 74, y: 47 },
     gate: { title: "India Gate", sub: "About", x: 50, y: 59 },
   };
@@ -293,6 +293,7 @@
     pinTitle.textContent = data.title;
     pinSub.textContent = data.sub;
     pin.hidden = false;
+    pin.classList.toggle("is-centered", key === "qutub");
     pin.style.left = `${data.x}%`;
     pin.style.top = `${data.y}%`;
     requestAnimationFrame(() => pin.classList.add("is-on"));

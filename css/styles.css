@@ -387,6 +387,15 @@ body.debug-hots .hot polygon {
   opacity: 1;
 }
 
+.pin.is-centered {
+  transform: translate(-50%, calc(-100% - 4px));
+}
+
+.pin.is-centered .stalk {
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .pin .stalk {
   display: block;
   width: 1px;
