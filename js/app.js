@@ -977,7 +977,7 @@
     if (!target?.closest) return false;
     if (document.querySelector(".panel:not([hidden])")) return true;
     if (!document.getElementById("scrollView")?.hidden) return true;
-    if (target.closest(".topbar, .tools, .menu-dropdown, .panel, .scroll-view, .wrap-back")) return true;
+    if (target.closest(".topbar, .tools, .menu-dropdown, .panel, .scroll-view, .wrap-back, .bgm")) return true;
     if (document.body.classList.contains("is-paged") && target.closest("a, .paper-bio, .paper-toc, .paper-photo, .paper-work, .paper-signals, .paper-stack, .hed-aside, .paper-stats, .studio")) {
       return window.scrollY > 4;
     }

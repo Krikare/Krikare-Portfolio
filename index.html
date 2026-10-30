@@ -19,6 +19,9 @@
     <link rel="stylesheet" href="css/studio.css?v=glow2" />
     <link rel="stylesheet" href="css/scroll.css?v=plain1" />
     <link rel="stylesheet" href="css/mobile.css?v=m4" />
+    <link rel="stylesheet" href="css/music.css?v=bgm6" />
+    <!-- Fighter jet cursor (disabled): <link rel="stylesheet" href="css/jet.css?v=jet3" /> -->
+    <link rel="stylesheet" href="css/chakra.css?v=ck3" />
   </head>
   <body data-weather="rain" data-time="day">
     <canvas id="noiseCanvas" aria-hidden="true"></canvas>
@@ -652,8 +655,49 @@
       <button class="scroll-close" id="scrollClose" type="button">Close</button>
     </div>
 
+    <div class="bgm" id="bgm">
+      <div class="bgm-ask" id="bgmAsk" role="dialog" aria-labelledby="bgmAskTitle">
+        <p id="bgmAskTitle">Play a quiet soundtrack?</p>
+        <p class="bgm-ask-note">Kept low, like background music.</p>
+        <div class="bgm-ask-row">
+          <button type="button" id="bgmAllow">Play</button>
+          <button type="button" id="bgmDecline">Not now</button>
+        </div>
+      </div>
+      <div class="bgm-dock" id="bgmDock">
+        <div class="bgm-menu" id="bgmMenu" hidden>
+          <div class="bgm-menu-head">
+            <button type="button" id="bgmToggle" aria-label="Play soundtrack">Play</button>
+            <p id="bgmTitle">Sundari Neeve</p>
+          </div>
+          <p class="bgm-menu-label">Song</p>
+          <div class="bgm-songs" id="bgmSongs"></div>
+          <label class="bgm-vol">
+            <span class="bgm-vol-name">Volume</span>
+            <input id="bgmVolume" type="range" min="0" max="100" value="15" aria-label="Soundtrack volume" />
+            <span id="bgmVolLabel">15%</span>
+          </label>
+          <p class="bgm-missing" id="bgmMissing" hidden>Put the audio file in assets/music.</p>
+        </div>
+        <div class="bgm-trigger">
+          <button type="button" class="bgm-bar" id="bgmOpen" aria-expanded="false" aria-controls="bgmMenu">Sound</button>
+          <button type="button" class="bgm-gem" id="bgmGem" aria-label="Open sound menu">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 9.5h3.2L12 5v14l-4.8-4.5H4z" />
+              <path d="M15.2 9.2a3.6 3.6 0 0 1 0 5.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+              <path d="M17.4 7a6.2 6.2 0 0 1 0 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <audio id="bgmAudio" src="assets/music/sundari-neeve.mp3" preload="auto" controls></audio>
+    </div>
+
     <script src="js/app.js?v=qutub2"></script>
     <script src="js/resume-scroll.js?v=plain1"></script>
+    <script src="js/music.js?v=bgm6"></script>
+    <!-- Fighter jet cursor (disabled): <script src="js/jet.js?v=jet3"></script> -->
+    <script src="js/chakra.js?v=ck6"></script>
   </body>
 </html>
 

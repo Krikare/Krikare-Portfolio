@@ -1,0 +1,46 @@
+/* Jet cursor — only active inside the campus ring on the home page. */
+#jetTrail {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 44;
+  filter: blur(0.7px);
+}
+
+.jet {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 44px;
+  height: 64px;
+  margin: -32px 0 0 -22px;
+  display: none;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 45;
+  will-change: transform, opacity;
+  filter: drop-shadow(0 8px 6px rgba(0, 0, 0, 0.42));
+}
+
+.jet-body {
+  width: 100%;
+  height: 100%;
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+
+.jet img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+body.jet-on,
+body.jet-on * {
+  cursor: none !important;
+}
