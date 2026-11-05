@@ -1,0 +1,198 @@
+/* Glass dock — three-button section switcher, vertical, middle of the right edge.
+   Layers (siblings on purpose, so each backdrop-filter sees the page):
+   .dock-glass  frosted bar
+   .dock-track  the three icon buttons
+   .dock-lens   the sliding selection "lens" that sits above the icons */
+
+.dock {
+  --dock-pad: 6px;
+  --item-w: 44px;
+  --item-h: 60px;
+  position: fixed;
+  top: 50%;
+  right: 14px;
+  z-index: 78;
+  width: calc(var(--item-w) + var(--dock-pad) * 2);
+  height: calc(var(--item-h) * 3 + var(--dock-pad) * 2 + 4px);
+  border-radius: 999px;
+  transform: translateY(-50%);
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.55s cubic-bezier(0.2, 0.9, 0.25, 1.1);
+}
+
+.dock-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* ---------- tones: dark over the campus, light over paper / studio ---------- */
+.dock[data-tone="dark"] {
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-hi: rgba(255, 255, 255, 0.55);
+  --glass-edge: rgba(255, 255, 255, 0.14);
+  --icon: #ffffff;
+  --lens-bg: rgba(255, 255, 255, 0.2);
+  --lens-hi: rgba(255, 255, 255, 0.6);
+  --drop: 0 14px 34px rgba(0, 0, 0, 0.32), 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dock[data-tone="light"] {
+  --glass-bg: rgba(255, 255, 255, 0.32);
+  --glass-hi: rgba(255, 255, 255, 0.95);
+  --glass-edge: rgba(40, 28, 10, 0.12);
+  --icon: #1b1814;
+  --lens-bg: rgba(40, 28, 10, 0.09);
+  --lens-hi: rgba(255, 255, 255, 0.9);
+  --drop: 0 12px 30px rgba(70, 48, 14, 0.2), 0 2px 6px rgba(70, 48, 14, 0.12);
+}
+
+/* ---------- the frosted bar ---------- */
+.dock-glass {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-color: var(--glass-bg);
+  -webkit-backdrop-filter: blur(14px) saturate(1.7) brightness(1.04);
+  backdrop-filter: blur(14px) saturate(1.7) brightness(1.04);
+  box-shadow:
+    inset 0 1px 1px var(--glass-hi),
+    inset 0 -1px 1px rgba(255, 255, 255, 0.16),
+    inset 0 0 0 1px var(--glass-edge),
+    var(--drop);
+  transition: background-color 0.45s ease, box-shadow 0.45s ease;
+}
+
+/* specular rim: bright at the top-left and bottom-right, like Apple's glass */
+.dock-glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: linear-gradient(
+    140deg,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(255, 255, 255, 0.1) 26%,
+    rgba(255, 255, 255, 0.04) 60%,
+    rgba(255, 255, 255, 0.6) 100%
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* ---------- icons ---------- */
+.dock-track {
+  position: absolute;
+  inset: var(--dock-pad);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dock-item {
+  flex: 1 1 0;
+  min-width: 0;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--icon);
+  opacity: 0.66;
+  cursor: pointer;
+  outline: none;
+  transition: color 0.45s ease, opacity 0.3s ease;
+}
+
+.dock-item[aria-current="page"] {
+  opacity: 1;
+}
+
+.dock-item svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+  transition: transform 0.35s cubic-bezier(0.2, 0.9, 0.25, 1.2);
+}
+
+.dock-item:focus-visible {
+  box-shadow: 0 0 0 2px var(--icon);
+}
+
+/* ---------- the sliding lens ---------- */
+.dock-lens {
+  position: absolute;
+  left: var(--dock-pad);
+  top: var(--dock-pad);
+  width: var(--item-w);
+  height: var(--item-h);
+  border-radius: 999px;
+  pointer-events: none;
+  background-color: var(--lens-bg);
+  -webkit-backdrop-filter: blur(1.5px) saturate(1.9) brightness(1.12);
+  backdrop-filter: blur(1.5px) saturate(1.9) brightness(1.12);
+  box-shadow:
+    inset 0 1px 1px var(--lens-hi),
+    inset 0 -1px 2px rgba(255, 255, 255, 0.25),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+    0 6px 14px rgba(0, 0, 0, 0.16);
+  transform-origin: 50% 50%;
+  will-change: transform;
+  transition: background-color 0.45s ease;
+}
+
+/* soft highlight across the top of the lens */
+.dock-lens::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(120% 90% at 30% -10%, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0) 55%);
+  pointer-events: none;
+}
+
+/* Chromium only: real refraction through an SVG displacement map (set up in nav.js) */
+.dock--refract .dock-lens {
+  -webkit-backdrop-filter: url(#dockLens) blur(0.4px) saturate(1.9) brightness(1.1);
+  backdrop-filter: url(#dockLens) blur(0.4px) saturate(1.9) brightness(1.1);
+}
+
+/* ---------- small screens: slightly slimmer ---------- */
+@media (max-width: 620px) {
+  .dock {
+    right: 8px;
+    --item-w: 40px;
+    --item-h: 54px;
+    --dock-pad: 5px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dock,
+  .dock-item svg {
+    transition: none;
+  }
+}
+
+/* Article page: leave a clear lane on the right for the dock */
+@media (min-width: 901px) {
+  body.is-paged .paper {
+    width: min(1280px, calc(100% - 168px));
+  }
+}

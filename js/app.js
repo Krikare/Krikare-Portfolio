@@ -1078,4 +1078,44 @@
     const id = location.hash.slice(1);
     if (document.getElementById(id)?.classList.contains("panel")) openPanel(id);
   }
+
+  // Section navigation for the glass dock (js/nav.js): campus -> article -> skill wheel.
+  function goPaged(index) {
+    const studio = document.getElementById("studio");
+    const land = () => {
+      const top = index && studio ? studio.getBoundingClientRect().top + window.scrollY : 0;
+      window.scrollTo({ top, behavior: reduceMotion ? "auto" : "smooth" });
+    };
+    if (document.body.classList.contains("is-paged")) {
+      land();
+      return;
+    }
+    setCoverSnap(1);
+    const t0 = performance.now();
+    const wait = () => {
+      if (document.body.classList.contains("is-paged")) requestAnimationFrame(land);
+      else if (performance.now() - t0 < 3000) requestAnimationFrame(wait);
+    };
+    wait();
+  }
+
+  window.campusNav = {
+    state() {
+      if (cover < 0.5) return "campus";
+      if (!document.body.classList.contains("is-paged")) return "article";
+      const studio = document.getElementById("studio");
+      const studioTop = studio ? studio.getBoundingClientRect().top + window.scrollY : Infinity;
+      return window.scrollY + viewportH() * 0.45 >= studioTop ? "wheel" : "article";
+    },
+    campus() {
+      window.scrollTo(0, 0);
+      setCoverSnap(0);
+    },
+    article() {
+      goPaged(0);
+    },
+    wheel() {
+      goPaged(1);
+    },
+  };
 })();

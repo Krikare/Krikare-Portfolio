@@ -11,7 +11,7 @@
   // The red ring from the design, as percentages of the campus stage.
   const REGION = { cx: 47.5, cy: 52, rx: 44, ry: 44.5 };
   // Anything here keeps the normal cursor.
-  const BLOCK = ".topbar, .menu-dropdown, .panel, .bgm, .unwrap-cue, .scroll-view";
+  const BLOCK = ".topbar, .menu-dropdown, .panel, .bgm, .unwrap-cue, .scroll-view, .dock";
 
   const OPACITY = 0.9; // translucent
   const IDLE_SPIN = 0.26; // rad/s while still (about one turn every 24s)
