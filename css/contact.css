@@ -1,0 +1,399 @@
+@font-face {
+  font-family: "Purushothamaa";
+  src: url("../assets/fonts/purushothamaa-regular.otf") format("opentype");
+  font-display: swap;
+}
+
+/* Contact card — palette taken from the reference card:
+   electric indigo body, lime-yellow headline, soft lavender secondary text. */
+
+.project-lower .contact-demo {
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  overflow: visible;
+  display: block;
+  position: relative;
+  z-index: 2;
+}
+
+.contact-card {
+  --cc-indigo: #2a12e8;
+  --cc-indigo-deep: #1f0bc4;
+  --cc-lime: #e4f56f;
+  --cc-lav: #b9b4ec;
+  --cc-line: rgba(255, 255, 255, 0.28);
+  --cc-ring: rgba(122, 92, 255, 0.55);
+
+  container-type: size;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  background: linear-gradient(170deg, var(--cc-indigo) 0%, var(--cc-indigo-deep) 100%);
+  color: #fff;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(31, 11, 196, 0.28), 0 1px 0 rgba(255, 255, 255, 0.18) inset;
+  transform-origin: center;
+  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.45s ease;
+  will-change: transform;
+}
+
+/* everything inside scales from one unit: 1u = 1% of card width (capped by height) */
+.contact-card .cc-in {
+  --u: min(1cqw, calc(1cqh * 2.1));
+  position: absolute;
+  inset: 0;
+  font-family: "Gothic A1", system-ui, sans-serif;
+}
+
+/* stitched band near the top edge */
+.contact-card .cc-stitch {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(var(--u) * 5);
+  height: calc(var(--u) * 2.4);
+  border-top: 1px solid var(--cc-line);
+  border-bottom: 1px dashed var(--cc-line);
+}
+
+/* concentric pattern, bottom-right corner */
+.contact-card .cc-rings {
+  position: absolute;
+  right: calc(var(--u) * -11);
+  bottom: calc(var(--u) * -11);
+  width: calc(var(--u) * 34);
+  height: calc(var(--u) * 34);
+  border-radius: 50%;
+  background: repeating-radial-gradient(
+    circle at center,
+    transparent 0 calc(var(--u) * 0.9),
+    var(--cc-ring) calc(var(--u) * 0.9) calc(var(--u) * 1.2)
+  );
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+/* fingerprint, top-left under the stitched band */
+.contact-card .cc-id {
+  position: absolute;
+  left: calc(var(--u) * 5.5);
+  top: calc(var(--u) * 10.5);
+  width: calc(var(--u) * 15.4);
+  height: calc(var(--u) * 23.6);
+  filter: drop-shadow(0 0 calc(var(--u) * 1.4) rgba(190, 180, 255, 0.45));
+}
+
+.contact-card .cc-id img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* reserved empty region (bottom-left) for a future animation.
+   Add class "is-guide" to see its outline while working on it. */
+.contact-card .cc-slot {
+  position: absolute;
+  left: calc(var(--u) * 6.5);
+  top: calc(var(--u) * 35.4);
+  width: calc(var(--u) * 11.4);
+  height: calc(var(--u) * 11.4);
+  border-radius: 50%;
+}
+
+.contact-card .cc-slot.is-guide {
+  border: 1.5px dotted rgba(255, 255, 255, 0.55);
+}
+
+.contact-card .cc-body {
+  position: absolute;
+  left: calc(var(--u) * 25);
+  right: calc(var(--u) * 4.5);
+  top: calc(var(--u) * 11);
+  bottom: calc(var(--u) * 4.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.contact-card .cc-name {
+  margin: 0;
+  height: calc(var(--u) * 10);
+  display: flex;
+  align-items: center;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0;
+  white-space: nowrap;
+  color: var(--cc-lime);
+  text-shadow: 0 calc(var(--u) * 0.35) 0 rgba(0, 0, 40, 0.35);
+}
+
+.contact-card .cc-name-in {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.contact-card .cc-name-in.is-en {
+  font-family: "Honk", "Bebas Neue", sans-serif;
+  font-size: calc(var(--u) * 7.3);
+}
+
+.contact-card .cc-name-in.is-te {
+  font-family: "Purushothamaa", "Noto Sans Telugu", sans-serif;
+  font-size: calc(var(--u) * 8.8);
+}
+
+.contact-card .cc-g {
+  display: inline-block;
+  min-width: 0.28em;
+  will-change: transform;
+  transition: transform 0.06s linear;
+}
+
+.contact-card .cc-g.is-space {
+  min-width: 0.3em;
+}
+
+.contact-card .cc-row {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 1.6);
+  min-width: 0;
+  font-size: calc(var(--u) * 3.9);
+  white-space: nowrap;
+  line-height: 1.1;
+  font-weight: 500;
+  color: var(--cc-lav);
+  text-decoration: none;
+}
+
+.contact-card .cc-label {
+  font-weight: 700;
+  color: #fff;
+}
+
+.contact-card .cc-num {
+  padding: 0 calc(var(--u) * 1.6);
+  border-radius: calc(var(--u) * 1);
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  letter-spacing: 0.08em;
+  filter: blur(calc(var(--u) * 0.85));
+  user-select: none;
+  transition: filter 0.35s ease;
+}
+
+.contact-card .cc-num.is-shown {
+  filter: none;
+  user-select: text;
+}
+
+.contact-card .cc-eye {
+  appearance: none;
+  border: 0;
+  padding: 0;
+  width: calc(var(--u) * 6);
+  height: calc(var(--u) * 6);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.contact-card .cc-eye:hover,
+.contact-card .cc-eye:focus-visible {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.contact-card .cc-eye svg {
+  width: 62%;
+  height: 62%;
+  grid-area: 1 / 1;
+}
+
+.contact-card .cc-eye .eye-off {
+  display: none;
+}
+
+.contact-card .cc-eye[aria-pressed="true"] .eye-on {
+  display: none;
+}
+
+.contact-card .cc-eye[aria-pressed="true"] .eye-off {
+  display: block;
+}
+
+.contact-card .cc-actions {
+  display: flex;
+  gap: calc(var(--u) * 2);
+}
+
+.contact-card .cc-btn {
+  display: inline-flex;
+  align-items: center;
+  height: calc(var(--u) * 7.8);
+  padding: 0 calc(var(--u) * 3.6);
+  border-radius: calc(var(--u) * 3.9);
+  border: 1px solid var(--cc-lav);
+  font-family: "Bebas Neue", "Gothic A1", sans-serif;
+  font-size: calc(var(--u) * 4.9);
+  letter-spacing: 0.06em;
+  line-height: 1;
+  color: #fff;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.contact-card .cc-btn:hover,
+.contact-card .cc-btn:focus-visible {
+  background: rgba(255, 255, 255, 0.16);
+  transform: translateY(-1px);
+}
+
+.contact-card .cc-btn-main {
+  background: var(--cc-lime);
+  border-color: var(--cc-lime);
+  color: #1b0aa8;
+}
+
+.contact-card .cc-btn-main:hover,
+.contact-card .cc-btn-main:focus-visible {
+  background: #f1ff85;
+}
+
+/* hover: card zooms in, everything around it softens with a very light blur */
+.contact-card:is(:hover, :focus-within) {
+  transform: scale(1.045);
+  box-shadow: 0 14px 34px rgba(31, 11, 196, 0.42), 0 1px 0 rgba(255, 255, 255, 0.22) inset;
+}
+
+.studio-side .resume-row,
+.studio-side .project-row,
+.studio-side .profile-col {
+  transition: filter 0.45s ease, opacity 0.45s ease;
+}
+
+.studio-side:has(.contact-card:is(:hover, :focus-within)) :is(.resume-row, .project-row, .profile-col) {
+  filter: blur(1.4px);
+  opacity: 0.88;
+}
+
+/* stacked layouts: no fixed row height, so the card keeps its own ratio */
+@media (max-width: 900px) {
+  .contact-card {
+    height: auto;
+    aspect-ratio: 2.1 / 1;
+  }
+}
+
+@media (hover: none) {
+  .contact-card:hover {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact-card,
+  .studio-side :is(.resume-row, .project-row, .profile-col) {
+    transition: none;
+  }
+  .contact-card:is(:hover, :focus-within) {
+    transform: none;
+  }
+}
+
+.contact-card .cc-cc {
+  margin-left: calc(var(--u) * -0.6);
+}
+
+/* ---- cartoon phone icon (replaces the "Phone No:" text) ---- */
+.contact-card .cc-phone-ico {
+  flex: none;
+  width: calc(var(--u) * 11.5);
+  height: auto;
+  aspect-ratio: 110 / 96;
+  overflow: visible;
+  margin-right: calc(var(--u) * 0.4);
+}
+
+.contact-card .cc-phone-ico :is(.ph-shell, .ph-body, .ph-cord, .ph-eye, .ph-nose, .ph-lip, .ph-notch, .ph-smile) {
+  stroke: #5b2a4c;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.contact-card .cc-phone-ico .ph-shadow { fill: #e8b5d6; }
+.contact-card .cc-phone-ico :is(.ph-shell, .ph-body) { fill: #b7ddf5; }
+.contact-card .cc-phone-ico .ph-cord { fill: none; stroke: #e9dcff; }
+.contact-card .cc-phone-ico .ph-eye { fill: #fff; stroke-width: 2.6; }
+.contact-card .cc-phone-ico .ph-pupil { fill: #5b2a4c; }
+.contact-card .cc-phone-ico .ph-nose { fill: #5b2a4c; }
+.contact-card .cc-phone-ico .ph-blush { fill: #f0a07c; }
+.contact-card .cc-phone-ico .ph-ring {
+  stroke: var(--cc-lime);
+  stroke-width: 3;
+  stroke-linecap: round;
+  opacity: 0;
+}
+
+/* handset lifts a touch, buzzes, then settles back */
+.contact-card .cc-phone-ico .ph-rec {
+  transform-box: fill-box;
+  transform-origin: 30% 100%;
+  animation: ph-buzz 3.6s ease-in-out infinite;
+}
+
+.contact-card .cc-phone-ico .ph-ring { animation: ph-ring 3.6s ease-in-out infinite; }
+
+.contact-card .cc-phone-ico .ph-face {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: ph-face 3.6s ease-in-out infinite;
+}
+
+@keyframes ph-buzz {
+  0%, 50% { transform: translate(0, 0) rotate(0); }
+  57% { transform: translate(0, -5px) rotate(-1deg); }
+  59% { transform: translate(1.2px, -5px) rotate(2.4deg); }
+  61% { transform: translate(-1.2px, -5px) rotate(-2.4deg); }
+  63% { transform: translate(1.2px, -5px) rotate(2.4deg); }
+  65% { transform: translate(-1.2px, -5px) rotate(-2.4deg); }
+  67% { transform: translate(1px, -5px) rotate(2deg); }
+  69% { transform: translate(-1px, -5px) rotate(-2deg); }
+  71% { transform: translate(0.8px, -5px) rotate(1.6deg); }
+  73% { transform: translate(-0.8px, -5px) rotate(-1.4deg); }
+  75% { transform: translate(0.4px, -4.5px) rotate(0.8deg); }
+  77% { transform: translate(-0.4px, -4px) rotate(-0.6deg); }
+  86% { transform: translate(0, -1.5px) rotate(0); }
+  93%, 100% { transform: translate(0, 0) rotate(0); }
+}
+
+@keyframes ph-face {
+  0%, 56% { transform: translate(0, 0); }
+  60% { transform: translate(0.6px, 0); }
+  64% { transform: translate(-0.6px, 0); }
+  68% { transform: translate(0.5px, 0); }
+  72% { transform: translate(-0.4px, 0); }
+  78%, 100% { transform: translate(0, 0); }
+}
+
+@keyframes ph-ring {
+  0%, 56% { opacity: 0; }
+  62%, 72% { opacity: 0.9; }
+  80%, 100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact-card .cc-phone-ico :is(.ph-rec, .ph-ring, .ph-face) { animation: none; }
+}
