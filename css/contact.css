@@ -523,7 +523,7 @@
   .contact-card .cc-gbox .gb-at { stroke-dashoffset: 0; }
 }
 
-/* ---- LinkedIn box (empty for now) ---- */
+/* ---- LinkedIn box: postage stamp and wordmark ---- */
 .contact-card .cc-lbox {
   flex: 1 1 0;
   min-width: 0;
@@ -533,8 +533,14 @@
   border-radius: calc(var(--u) * 2.4);
   overflow: hidden;
   border: 1px solid var(--cc-lav);
-  background: rgba(255, 255, 255, 0.08);
+  background: #f4f6f8;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.contact-card .lb-poster {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .contact-card .cc-lbox:hover,
