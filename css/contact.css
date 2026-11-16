@@ -1,6 +1,13 @@
 @font-face {
-  font-family: "Purushothamaa";
-  src: url("../assets/fonts/purushothamaa-regular.otf") format("opentype");
+  font-family: "Dekko";
+  src: url("../assets/fonts/dekko-devanagari.woff2") format("woff2");
+  unicode-range: U+0900-097F, U+200C-200D, U+25CC;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "GIST TLOT Rajan";
+  src: url("../assets/fonts/gist-tlot-rajan-te.woff2") format("woff2");
   font-display: swap;
 }
 
@@ -145,8 +152,13 @@
 }
 
 .contact-card .cc-name-in.is-te {
-  font-family: "Purushothamaa", "Noto Sans Telugu", sans-serif;
-  font-size: calc(var(--u) * 8.8);
+  font-family: "GIST TLOT Rajan", "Noto Sans Telugu", sans-serif;
+  font-size: calc(var(--u) * 5.8);
+}
+
+.contact-card .cc-name-in.is-hi {
+  font-family: "Dekko", "Noto Sans Devanagari", sans-serif;
+  font-size: calc(var(--u) * 7.3);
 }
 
 .contact-card .cc-g {

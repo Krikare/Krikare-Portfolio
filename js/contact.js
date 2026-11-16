@@ -17,13 +17,14 @@
   eye.addEventListener("click", () => set(eye.getAttribute("aria-pressed") !== "true"));
 })();
 
-/* Name: scrambles zig-zag, then settles into Telugu; later scrambles again and settles into English. */
+/* Name: scrambles zig-zag, then settles into Telugu, then Hindi, then English, and loops. */
 (() => {
   const el = document.getElementById("ccName");
   if (!el) return;
 
   const NAMES = [
     { cls: "is-te", text: "కార్తీక్ రెడ్డి పెద్దాల", pool: "అఆఇఈఉఊఎఏఐఒఓకఖగఘచఛజఝటఠడఢణతథదధనపఫబభమయరలవశషసహ" },
+    { cls: "is-hi", text: "कार्तिक रेड्डी पेड्डाला", pool: "अआइईउऊएऐओऔकखगघचछजझटठडढणतथदधनपफबभमयरलवशषसह" },
     { cls: "is-en", text: "Karthik Reddy Peddala", pool: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" },
   ];
   const HOLD = 3000; // ms the finished name stays on screen
@@ -31,13 +32,13 @@
   const SETTLE = 420; // ms before the first letter locks in
   const STAGGER = 38; // extra ms per following letter
 
-  const seg = window.Intl && Intl.Segmenter ? new Intl.Segmenter("te", { granularity: "grapheme" }) : null;
+  const seg = window.Intl && Intl.Segmenter ? new Intl.Segmenter(undefined, { granularity: "grapheme" }) : null;
   const split = (t) => (seg ? Array.from(seg.segment(t), (x) => x.segment) : Array.from(t));
   const pick = (pool) => pool[Math.floor(Math.random() * pool.length)];
 
   if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-  let idx = 1; // markup starts on English; first animation goes to Telugu
+  let idx = NAMES.length - 1; // markup starts on English; first animation goes to Telugu
   let raf = 0;
   let timer = 0;
   let visible = true;
