@@ -640,3 +640,115 @@ body.debug-hots .hot polygon {
     height: 48px;
   }
 }
+
+
+/* Anima-style building inspect: orange frame + name tag + white tip */
+.campus-inspect {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.28s ease;
+}
+
+.campus-inspect.is-on {
+  opacity: 1;
+}
+
+.campus-inspect[hidden] {
+  display: block !important; /* keep for transitions; visibility via opacity */
+  opacity: 0;
+}
+
+.campus-inspect .ci-frame {
+  position: absolute;
+  border: 1.5px solid #e85a2a;
+  border-radius: 2px;
+  box-sizing: border-box;
+  transform: scale(0.96);
+  transform-origin: center;
+  transition: left 0.28s ease, top 0.28s ease, width 0.28s ease, height 0.28s ease, transform 0.28s ease;
+}
+
+.campus-inspect.is-on .ci-frame {
+  transform: scale(1);
+}
+
+.campus-inspect .ci-dot {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #e85a2a;
+  box-shadow: 0 0 0 1.5px #fff;
+  pointer-events: none;
+}
+
+.campus-inspect .ci-dot.tl { left: 0; top: 0; transform: translate(-50%, -50%); }
+.campus-inspect .ci-dot.tr { right: 0; top: 0; transform: translate(50%, -50%); }
+.campus-inspect .ci-dot.bl { left: 0; bottom: 0; transform: translate(-50%, 50%); }
+.campus-inspect .ci-dot.br { right: 0; bottom: 0; transform: translate(50%, 50%); }
+
+.campus-inspect .ci-size {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 6px);
+  transform: translateX(-50%);
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #e85a2a;
+  color: #fff;
+  font-family: "Gothic A1", system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  line-height: 1.2;
+  box-shadow: 0 2px 8px rgba(232, 90, 42, 0.28);
+}
+
+.campus-inspect .ci-tip {
+  position: absolute;
+  width: min(220px, 38%);
+  padding: 12px 14px 13px;
+  border-radius: 12px;
+  background: #fff;
+  color: #1a1a1a;
+  box-shadow: 0 10px 28px rgba(20, 16, 10, 0.18), 0 1px 0 rgba(255, 255, 255, 0.8) inset;
+  transform: translateY(6px);
+  opacity: 0;
+  transition: left 0.28s ease, top 0.28s ease, transform 0.28s ease, opacity 0.28s ease;
+}
+
+.campus-inspect.is-on .ci-tip {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.campus-inspect .ci-tip b {
+  display: block;
+  font-family: "Gothic A1", system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: #111;
+  margin: 0 0 4px;
+}
+
+.campus-inspect .ci-tip p {
+  margin: 0;
+  font-family: "Gothic A1", system-ui, sans-serif;
+  font-size: 12.5px;
+  line-height: 1.35;
+  color: #4a4a4a;
+  font-weight: 500;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .campus-inspect,
+  .campus-inspect .ci-frame,
+  .campus-inspect .ci-tip {
+    transition: none;
+  }
+}

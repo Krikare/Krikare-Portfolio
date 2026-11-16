@@ -280,31 +280,94 @@
   }
 
   const PINS = {
-    parliament: { title: "Parliament", sub: "Skills & Projects", x: 28, y: 22 },
-    hawa: { title: "Hawa Mahal", sub: "Contact", x: 52, y: 7 },
-    qutub: { title: "Qutub Minar", sub: "Education", x: 83.4, y: 30 },
-    fort: { title: "Red Fort", sub: "Achievements", x: 74, y: 47 },
-    gate: { title: "India Gate", sub: "About", x: 50, y: 59 },
+    parliament: {
+      title: "Parliament",
+      strength: "Skills & Projects",
+      tip: "Click to view my skills.",
+    },
+    hawa: {
+      title: "Hawa Mahal",
+      strength: "Contact",
+      tip: "Click to contact me.",
+    },
+    qutub: {
+      title: "Qutub Minar",
+      strength: "Education",
+      tip: "Click to view my education.",
+    },
+    fort: {
+      title: "Red Fort",
+      strength: "Achievements",
+      tip: "Click to view my achievements.",
+    },
+    gate: {
+      title: "India Gate",
+      strength: "About",
+      tip: "Click to learn about me.",
+    },
   };
 
-  function showPin(key) {
+  const inspect = document.getElementById("campusInspect");
+  const ciFrame = inspect?.querySelector(".ci-frame");
+  const ciSize = document.getElementById("ciSize");
+  const ciTip = document.getElementById("ciTip");
+  const ciTitle = document.getElementById("ciTitle");
+  const ciBody = document.getElementById("ciBody");
+
+  function showPin(key, hot) {
     const data = PINS[key];
-    if (!data || !pin || cover > 0.08) return;
-    pinTitle.textContent = data.title;
-    pinSub.textContent = data.sub;
-    pin.hidden = false;
-    pin.classList.toggle("is-centered", key === "qutub");
-    pin.style.left = `${data.x}%`;
-    pin.style.top = `${data.y}%`;
-    requestAnimationFrame(() => pin.classList.add("is-on"));
+    if (!data || !inspect || !ciFrame || cover > 0.08) return;
+
+    const poly = hot?.querySelector("polygon");
+    if (!poly) return;
+    const bb = poly.getBBox(); // viewBox units (0–100)
+
+    // pad the frame a touch so it breathes around the silhouette
+    const pad = 1.1;
+    const x = Math.max(0, bb.x - pad);
+    const y = Math.max(0, bb.y - pad);
+    const w = Math.min(100 - x, bb.width + pad * 2);
+    const h = Math.min(100 - y, bb.height + pad * 2);
+
+    ciFrame.style.left = `${x}%`;
+    ciFrame.style.top = `${y}%`;
+    ciFrame.style.width = `${w}%`;
+    ciFrame.style.height = `${h}%`;
+
+    // orange tag shows the building name (not pixel size)
+    if (ciSize) ciSize.textContent = data.title;
+
+    if (ciTitle) ciTitle.textContent = data.strength;
+    if (ciBody) ciBody.textContent = data.tip;
+
+    // park the white tip to the right of the frame; flip left if near the edge
+    if (ciTip) {
+      const tipW = 22; // approx % width of tip
+      const gap = 1.6;
+      let tipLeft = x + w + gap;
+      let tipTop = y + Math.max(0, (h - 12) / 2);
+      if (tipLeft + tipW > 96) tipLeft = Math.max(2, x - tipW - gap);
+      if (tipTop + 16 > 96) tipTop = Math.max(2, 96 - 16);
+      ciTip.style.left = `${tipLeft}%`;
+      ciTip.style.top = `${tipTop}%`;
+    }
+
+    // keep legacy pin out of the way
+    pin && (pin.hidden = true);
+    pin?.classList.remove("is-on");
+
+    inspect.hidden = false;
+    inspect.setAttribute("aria-hidden", "false");
+    requestAnimationFrame(() => inspect.classList.add("is-on"));
   }
 
   function hidePin() {
+    inspect?.classList.remove("is-on");
     pin?.classList.remove("is-on");
   }
 
   document.querySelectorAll(".hot").forEach((hot) => {
-    hot.addEventListener("pointerenter", () => showPin(hot.dataset.pin));
+    hot.addEventListener("pointerenter", () => showPin(hot.dataset.pin, hot));
     hot.addEventListener("pointerleave", hidePin);
     hot.addEventListener("click", (e) => {
       e.preventDefault();
