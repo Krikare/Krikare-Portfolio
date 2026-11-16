@@ -279,10 +279,10 @@ body:not(.is-paged) .studio {
   font-family: var(--mono);
   font-size: clamp(8px, 1.05dvh, 10px);
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.04em;
   text-transform: none;
   text-align: center;
-  line-height: 1;
+  line-height: 1.25;
 }
 
 .profile-card:has(.profile-ico-linkedin) {
@@ -390,7 +390,9 @@ body:not(.is-paged) .studio {
 }
 
 .project-row .project-card h3 {
-  font-size: clamp(13px, 1.8dvh, 18px);
+  font-size: clamp(12px, 1.6dvh, 16px);
+  line-height: 1.15;
+  overflow-wrap: anywhere;
 }
 
 .project-row .project-card {

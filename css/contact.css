@@ -202,8 +202,8 @@
 }
 
 .contact-card .cc-num.is-shown {
-  filter: none;
-  user-select: text;
+  filter: blur(calc(var(--u) * 0.85));
+  user-select: none;
 }
 
 .contact-card .cc-eye {

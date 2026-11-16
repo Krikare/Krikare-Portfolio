@@ -28,6 +28,16 @@
     padding: calc(10px + env(safe-area-inset-top, 0px)) 12px 10px;
   }
 
+  .logo {
+    height: auto;
+    min-height: 32px;
+    max-width: 46vw;
+    padding: 6px 8px;
+    font-size: 12px;
+    line-height: 1.15;
+    white-space: normal;
+  }
+
   .tools button {
     min-height: 44px;
     padding: 0 14px;

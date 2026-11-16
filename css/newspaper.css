@@ -507,6 +507,16 @@ body.is-unwrapped .panel {
   height: 15px;
 }
 
+.paper-work a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.paper-work a:hover,
+.paper-work a:focus-visible {
+  text-decoration: underline;
+}
+
 .paper-work b,
 .paper-signals b {
   display: block;

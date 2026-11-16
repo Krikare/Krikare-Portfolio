@@ -139,8 +139,9 @@ a {
   text-decoration: none;
   font-family: var(--serif);
   font-weight: 800;
-  font-size: 16px;
-  letter-spacing: 0.02em;
+  font-size: 14px;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
 }
 
 .beta {
@@ -614,6 +615,10 @@ body.debug-hots .hot polygon {
   padding: 0;
   display: grid;
   gap: 10px;
+}
+
+.panel article a {
+  color: inherit;
 }
 
 .contact-list a {

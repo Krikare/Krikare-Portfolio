@@ -1,20 +1,22 @@
-/* Contact card: eye button reveals / hides the blurred phone number. */
+/* Contact card: the eye stays closed. The number is never revealed. */
 (() => {
   const eye = document.getElementById("ccEye");
   const num = document.getElementById("ccNum");
   if (!eye || !num) return;
 
-  let timer = 0;
-  const set = (show) => {
-    eye.setAttribute("aria-pressed", String(show));
-    eye.setAttribute("aria-label", show ? "Hide phone number" : "Show phone number");
-    num.classList.toggle("is-shown", show);
-    num.setAttribute("aria-hidden", String(!show));
-    window.clearTimeout(timer);
-    if (show) timer = window.setTimeout(() => set(false), 8000);
+  const keepHidden = () => {
+    eye.setAttribute("aria-pressed", "false");
+    eye.setAttribute("aria-label", "Phone number hidden");
+    num.classList.remove("is-shown");
+    num.setAttribute("aria-hidden", "true");
+    num.textContent = "•••••\u00a0•••••";
   };
 
-  eye.addEventListener("click", () => set(eye.getAttribute("aria-pressed") !== "true"));
+  keepHidden();
+  eye.addEventListener("click", (event) => {
+    event.preventDefault();
+    keepHidden();
+  });
 })();
 
 /* Name: scrambles zig-zag, then settles into Telugu, then Hindi, then English, and loops. */
