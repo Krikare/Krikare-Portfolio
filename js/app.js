@@ -631,9 +631,9 @@
       wheelAcc = 0;
     }
 
-    if (drag || reduceMotion) {
+    if (drag || touchDrag || reduceMotion) {
       cover = coverTarget;
-      snapping = false;
+      if (drag || touchDrag) snapping = false;
     } else if (snapping) {
       cover += (coverTarget - cover) * (1 - Math.exp(-dt / 90));
       if (Math.abs(coverTarget - cover) < 0.00035) {
@@ -968,7 +968,8 @@
       space = Math.min(space, (2 * Math.PI * ring.r * size) / ring.n);
       if (i) space = Math.min(space, (ring.r - wheelRings[i - 1].r) * size);
     });
-    const logo = Math.max(38, Math.min(64, space * 0.72));
+    const phone = window.matchMedia("(max-width: 768px)").matches;
+    const logo = Math.max(phone ? 16 : 38, Math.min(phone ? 40 : 64, space * 0.72));
     wheelItems.forEach((item) => {
       item.node.style.width = `${logo.toFixed(1)}px`;
       item.node.style.height = `${logo.toFixed(1)}px`;
@@ -1049,20 +1050,20 @@
 
   function phoneSnap() {
     if (!touchDrag) return;
-    const net = cover - touchDrag.start;
-    const elapsed = Math.max(16, performance.now() - touchDrag.t0);
-    const flick = (touchDrag.y0 - touchDrag.lastY) / elapsed;
+    const vy = touchDrag.vy || 0;
     const fromCue = touchDrag.fromCue;
     const moved = touchDrag.moved;
+    const scrolled = window.scrollY > 8;
     touchDrag = null;
+    if (scrolled) return;
     if (fromCue && moved < 12) {
       setCoverSnap(1);
       return;
     }
     if (moved < 12) return;
-    if (flick > 0.32 || net > 0.1 || cover > 0.32) setCoverSnap(1);
-    else if (flick < -0.32 || net < -0.1 || cover < 0.18) setCoverSnap(0);
-    else setCoverSnap(cover >= 0.45 ? 1 : 0);
+    if (vy > 0.55 || cover > 0.62) setCoverSnap(1);
+    else if (vy < -0.55 || cover < 0.28) setCoverSnap(0);
+    else setCoverSnap(cover >= 0.5 ? 1 : 0);
   }
 
   document.addEventListener(
@@ -1071,13 +1072,17 @@
       if (!phoneOn() || e.touches.length !== 1) return;
       if (phoneBlocked(e.target)) return;
       const t = e.touches[0];
+      const now = performance.now();
       touchDrag = {
         y0: t.clientY,
         lastY: t.clientY,
-        t0: performance.now(),
+        t0: now,
+        tLast: now,
+        vy: 0,
         start: cover,
         moved: 0,
         fromCue: !!e.target.closest?.("#unwrapCue"),
+        native: document.body.classList.contains("is-paged") && window.scrollY > 2,
       };
       snapping = false;
     },
@@ -1089,16 +1094,31 @@
     (e) => {
       if (!phoneOn() || !touchDrag || e.touches.length !== 1) return;
       const t = e.touches[0];
-      const dy = touchDrag.y0 - t.clientY;
+      const now = performance.now();
+      const dt = Math.max(8, now - touchDrag.tLast);
+      touchDrag.vy = (touchDrag.lastY - t.clientY) / dt;
+      touchDrag.tLast = now;
       touchDrag.lastY = t.clientY;
+      const dy = touchDrag.y0 - t.clientY;
       touchDrag.moved = Math.max(touchDrag.moved, Math.abs(dy));
-      const paged = document.body.classList.contains("is-paged");
-      if (paged && window.scrollY > 2) return;
-      if (paged && dy > 0) return;
-      if (touchDrag.moved < 10) return;
-      if (coverTarget <= 0 && dy < 0) return;
+      if (touchDrag.native) return;
+      if (touchDrag.moved < 8) return;
+      if (touchDrag.start <= 0.001 && dy < 0 && window.scrollY <= 0) return;
       e.preventDefault();
-      coverTarget = clamp(touchDrag.start + dy / (viewportH() * 0.34), 0, 1);
+      const travel = viewportH() * 0.5;
+      const openRoom = (1 - touchDrag.start) * travel;
+      if (dy >= openRoom) {
+        coverTarget = 1;
+        cover = 1;
+        applyCover(cover);
+        void document.documentElement.offsetHeight;
+        window.scrollTo(0, dy - openRoom);
+      } else {
+        if (window.scrollY > 0) window.scrollTo(0, 0);
+        coverTarget = clamp(touchDrag.start + dy / travel, 0, 1);
+        cover = coverTarget;
+        applyCover(cover);
+      }
       kickCover();
     },
     { passive: false, capture: true }

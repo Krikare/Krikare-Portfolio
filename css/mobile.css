@@ -22,6 +22,11 @@
   body.is-paged {
     touch-action: pan-y;
     overscroll-behavior-y: contain;
+    padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .studio {
+    padding-right: 58px;
   }
 
   .topbar {
@@ -137,8 +142,10 @@
   }
 
   .paper {
-    width: calc(100% - 20px);
-    padding: 8px 0 calc(12px + env(safe-area-inset-bottom, 0px));
+    width: min(1280px, calc(100vw - 104px));
+    margin-left: 14px;
+    margin-right: auto;
+    padding: 8px 0 calc(72px + env(safe-area-inset-bottom, 0px));
   }
 
   .paper-mast {
@@ -220,16 +227,22 @@
   }
 
   .studio-wheel {
-    min-height: min(92vw, 420px);
+    min-height: min(78vw, 340px);
+    padding: 36px 10px 18px;
   }
 
   .wheel {
-    width: min(88%, 84vw, 420px);
+    width: min(54vw, 220px);
   }
 
   .skill-logo {
-    width: 40px;
-    height: 40px;
+    width: 26px;
+    height: 26px;
+  }
+
+  .skill-logo span {
+    font-size: 8px;
+    letter-spacing: 0;
   }
 
   .studio-side {
